@@ -5,9 +5,9 @@
 
 ## API-Zugänge
 
-| Anbieter | Service/Produkt | Zweck | Umgebung | Secret-Referenz (kein Klartext) | Owner | Rotation (Tage) | Letzte Rotation | Status | Notiz |
-|---|---|---|---|---|---|---:|---|---|---|
-| _Beispiel: OpenAI_ | _GPT API_ | _Chatbot Antworten_ | _prod_ | _1Password: API/OpenAI_ | _fei_ | _90_ | _2026-01-01_ | _aktiv_ | _-_| 
+| Anbieter | Secret-Referenz (kein Klartext) | Letzte Rotation | Status |
+|---|---|---|---|
+| _Beispiel: OpenAI_ | _1Password: API/OpenAI_ | _2026-01-01_ | _aktiv_ |
 
 ## Skills
 
