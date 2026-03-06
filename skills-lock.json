@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "skills": {
+    "qdrant-vector-search": {
+      "source": "davila7/claude-code-templates",
+      "sourceType": "github",
+      "computedHash": "7d759309b0c22b2d6097562d6d349fdac38cfc661fcfbe658f158444403310da"
+    },
+    "token-optimizer": {
+      "source": "d4kooo/openclaw-token-memory-optimizer",
+      "sourceType": "github",
+      "computedHash": "d461b2230b10d3381215e7557a8a24444d5f884d9e10a0f8a4ae4fe83eb8d375"
+    }
+  }
+}

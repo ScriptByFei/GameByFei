@@ -1,48 +1,55 @@
-# TOOLS.md - Local Notes
+# TOOLS.md - Tool Configuration & Notes
 
-Skills define _how_ tools work. This file is for _your_ specifics — the stuff that's unique to your setup.
-
-## What Goes Here
-
-Things like:
-
-- Camera names and locations
-- SSH hosts and aliases
-- Preferred voices for TTS
-- Speaker/room names
-- Device nicknames
-- Anything environment-specific
-
-## Examples
-
-```markdown
-### Cameras
-
-- living-room → Main area, 180° wide angle
-- front-door → Entrance, motion-triggered
-
-### SSH
-
-- home-server → 192.168.1.100, user: admin
-
-### TTS
-
-- Preferred voice: "Nova" (warm, slightly British)
-- Default speaker: Kitchen HomePod
-```
-
-## Why Separate?
-
-Skills are shared. Your setup is yours. Keeping them apart means you can update skills without losing your notes, and share skills without leaking your infrastructure.
-
-## Skills Layout (current)
-
-- Primary OpenClaw view: `~/.openclaw/workspace/skills`
-- Skills installed via `npx skills add`: `~/.agents/skills`
-- To keep one logical place, installed skills are symlinked into `~/.openclaw/workspace/skills`.
-
-This way, day-to-day management happens in one folder (`workspace/skills`) while package-managed skills still update in `~/.agents/skills`.
+> Document tool-specific configurations, gotchas, and credentials here.
 
 ---
 
-Add whatever helps you do your job. This is your cheat sheet.
+## Credentials Location
+
+All credentials stored in `.credentials/` (gitignored):
+- `example-api.txt` — Example API key
+
+---
+
+## [Tool Name]
+
+**Status:** ✅ Working | ⚠️ Issues | ❌ Not configured
+
+**Configuration:**
+```
+Key details about how this tool is configured
+```
+
+**Gotchas:**
+- Things that don't work as expected
+- Workarounds discovered
+
+**Common Operations:**
+```bash
+# Example command
+tool-name --common-flag
+```
+
+---
+
+## Writing Preferences
+
+[Document any preferences about writing style, voice, etc.]
+
+---
+
+## What Goes Here
+
+- Tool configurations and settings
+- Credential locations (not the credentials themselves!)
+- Gotchas and workarounds discovered
+- Common commands and patterns
+- Integration notes
+
+## Why Separate?
+
+Skills define *how* tools work. This file is for *your* specifics — the stuff that's unique to your setup.
+
+---
+
+*Add whatever helps you do your job. This is your cheat sheet.*

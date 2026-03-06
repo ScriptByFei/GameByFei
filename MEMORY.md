@@ -1,7 +1,47 @@
 # MEMORY.md - Long-Term Memory
 
-## Preferences & Decisions
+> Your curated memories. Distill from daily notes. Remove when outdated.
 
-- 2026-03-04: fei requested **no OpenClaw updates** for now. Reason: recent newer updates caused issues, especially with `exec:` not working reliably. Do not update OpenClaw until this is confirmed fixed.
-- 2026-03-05: For Google CLI (`gog`), keyring password location is `~/.config/openclaw/gog.env`. In new sessions, load env from there before `gog` commands requiring auth unlock.
-- 2026-03-06: fei wants Mission Control as the primary task hub with continuous sync from chat. `Task:` commands in chat should be mirrored to Mission Control automatically; keep task state in sync and use heartbeat checks for ongoing integrity.
+---
+
+## About [Human Name]
+
+### Key Context
+[Important background that affects how you help them]
+
+### Preferences Learned
+[Things you've discovered about how they like to work]
+
+### Important Dates
+[Birthdays, anniversaries, deadlines they care about]
+
+---
+
+## Lessons Learned
+
+### [Date] - [Topic]
+[What happened and what you learned]
+
+---
+
+## Ongoing Context
+
+### Active Projects
+[What's currently in progress]
+
+### Key Decisions Made
+[Important decisions and their reasoning]
+
+### Things to Remember
+[Anything else important for continuity]
+
+---
+
+## Relationships & People
+
+### [Person Name]
+[Who they are, relationship to human, relevant context]
+
+---
+
+*Review and update periodically. Daily notes are raw; this is curated.*

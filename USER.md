@@ -1,4 +1,4 @@
-# USER.md - About Your Human
+# USER.md - About My Human
 
 _Learn about the person you're helping. Update this as you go._
 
@@ -6,12 +6,32 @@ _Learn about the person you're helping. Update this as you go._
 - **What to call them:** fei
 - **Pronouns:** _(optional)_
 - **Timezone:** Europe/Berlin
-- **Notes:** Likes concise, practical help.
-
-## Context
-
-_(What do they care about? What projects are they working on? What annoys them? What makes them laugh? Build this over time.)_
+- **Notes:** Likes concise, practical help. Works shift schedule (variable hours).
 
 ---
 
-The more you know, the better you can help. But remember — you're learning about a person, not building a dossier. Respect the difference.
+## Life Goals & Context
+
+### Primary Goal
+Einstellung des Agents als persönlicher Assistent und gemeinsame Umsetzung von Automatisierungen/Workflows.
+
+### Current Projects
+Chill-Phase: Ideen sammeln, Projekte planen, nicht aktiv umsetzen. Exploration-Modus statt Execution-Modus.
+
+### Key Relationships
+Keine spezifischen Personen nennenswert.
+
+### Preferences
+- **Communication style:** Detailliert / ausführlich, aber kompakt. Nicht zu lang (keine Walls of Text).
+- **Work style:** Schichtsystem – variable Produktivitätszeiten. Gebündelte Kommunikation zu festen Zeitpunkten (nicht durchgehend/pingend).
+- **Pet peeves:** Zu lange Antworten, Füllertext, übermäßig lange Erklärungen.
+
+---
+
+## What Winning Looks Like
+
+Agent ist optimal als persönlicher Assistent eingerichtet. Cooles Zeug kann gemeinsam umgesetzt werden. Mensch fühlt sich unterstützt, nicht genervt.
+
+---
+
+*Update this as you learn more. The better you know them, the more value you create.*
