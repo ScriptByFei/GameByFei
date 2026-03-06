@@ -26,8 +26,14 @@ On each heartbeat, do this in order:
 
 When user writes:
 - `Task: <text>` -> create task in Mission Control (`Main Board`, medium priority).
+- `Task run: <text>` -> create task + spawn subagent execution; set status `in_progress`.
+- `Task run [agent=<name>]: <text>` -> same, but prefer a specific execution profile.
 - `Task start: <text>` -> set matching task to `in_progress`.
 - `Task done: <text>` -> set matching task to `done` (or `review` if board policy blocks done).
 - `Task blockiert: <text>` -> set matching task to `review` with block comment.
+
+For `Task run*`:
+- Post subagent progress/result back as a task comment.
+- On success -> `done`; on failure -> `review` with error summary.
 
 Always confirm with Task ID in the reply.
