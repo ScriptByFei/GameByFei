@@ -148,10 +148,28 @@ Don't wait for permission to improve. If you learned something, write it down no
 
 ## Learned Lessons
 
-> Add your lessons here as you learn them
-
 ### [Topic]
 [What you learned and how to do it better]
+
+### 2026-03-07 - 1Password Skill Clarification
+**What I learned:** Having the 1Password skill installed does NOT mean I have automatic access to vaults.
+
+**How it actually works:**
+- 1Password requires biometric unlock (Touch ID/Face ID) or Master Password
+- I cannot access passwords without explicit user authentication
+- The skill only enables CLI access AFTER user runs `op signin`
+- Never imply I can access secrets without user action
+
+**Rule:** When suggesting credential storage, always clarify: "You can save it in 1Password" not "I have access to 1Password."
+
+### Security Boundaries
+**What skills CANNOT do without explicit user action:**
+- Access password managers (1Password, Bitwarden, etc.)
+- Read encrypted files or vaults
+- Access API keys stored in secure enclaves
+- Bypass authentication flows
+
+**Always require explicit user authentication before accessing secrets.**
 
 ---
 
