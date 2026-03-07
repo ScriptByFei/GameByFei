@@ -21,6 +21,22 @@
 
 ## Lessons Learned
 
+### 2026-03-07 - OpenClaw Cron Format
+**Was passiert ist:** Cron-Job zeigte "cron undefined" obwohl Schedule korrekt aussah.
+
+**Die Lösung:** OpenClaw braucht `schedule` als **Objekt**, nicht String:
+```json
+// ❌ FALSCH:
+"schedule": "0 */12 * * *"
+
+// ✅ RICHTIG:
+"schedule": { "expr": "0 */12 * * *" }
+```
+
+**Location:** `~/.openclaw/cron/jobs.json`
+
+---
+
 ### [Date] - [Topic]
 [What happened and what you learned]
 
