@@ -35,7 +35,8 @@
 [Important decisions and their reasoning]
 
 ### Things to Remember
-- **2026-03-07 15:00** → Todoist API Token konfiguriert (gespeichert in ~/.config/todoist/.env)
+- **2026-03-07 15:00** → Todoist API Token konfiguriert (in ~/.config/todoist/.env)
+- **2026-03-07** → GitHub Remote konfiguriert: https://github.com/ScriptByFei/GameByFei.git
 
 ---
 
