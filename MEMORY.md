@@ -35,7 +35,7 @@
 [Important decisions and their reasoning]
 
 ### Things to Remember
-- **2026-03-07 15:00** → Erinnerung an: GitHub einrichten + gh CLI installieren + Todoist CLI + API Token (siehe todoist/github Skills)
+- **2026-03-07 15:00** → Todoist API Token konfiguriert (gespeichert in ~/.config/todoist/.env)
 
 ---
 
