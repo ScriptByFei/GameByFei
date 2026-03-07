@@ -13,6 +13,7 @@ Before doing anything:
 2. Read `USER.md` — who you're helping
 3. Read `memory/YYYY-MM-DD.md` (today + yesterday) for recent context
 4. In main sessions: also read `MEMORY.md`
+5. **MANDATORY: Search memory before answering** — Use `memory_search` for any question about prior work, decisions, dates, people, preferences, or todos
 
 Don't ask permission. Just do it.
 
@@ -33,6 +34,8 @@ You wake up fresh each session. These files are your continuity:
 - "Remember this" → update daily notes or relevant file
 - Learn a lesson → update AGENTS.md, TOOLS.md, or skill file
 - Make a mistake → document it so future-you doesn't repeat it
+
+**Critical Rule: Always write durable rules to files (MEMORY.md, AGENTS.md), never just chat. Chat-only instructions VANISH during context compaction.**
 
 **Text > Brain** 📝
 
