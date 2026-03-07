@@ -46,10 +46,10 @@ Answer these to help your agent understand you. Leave blank to skip.
 > Einstellung des Agents als persönlicher Assistent und gemeinsame Umsetzung von Automatisierungen/Workflows.
 
 **What does "winning" look like for you in 1 year?**
-> 
+> Gesundheit ist das wichtigste
 
 **What does ideal life look/feel like when you've succeeded?**
-> 
+> Gesund sein
 
 ### 4. Work Style
 **When are you most productive? (morning/afternoon/evening)**
@@ -82,8 +82,8 @@ As questions are answered, the agent logs them here:
 | 3 | Communication style | ✅ | interactive |
 | 4 | Pet peeves | ✅ | interactive |
 | 5 | Primary goal | ✅ | interactive |
-| 6 | 1-year vision | ❌ | — |
-| 7 | Ideal life | ❌ | — |
+| 6 | 1-year vision | ✅ | interactive |
+| 7 | Ideal life | ✅ | interactive |
 | 8 | Productivity time | ✅ | interactive |
 | 9 | Async vs real-time | ✅ | interactive |
 | 10 | Current projects | ✅ | interactive |

@@ -15,6 +15,12 @@ _Learn about the person you're helping. Update this as you go._
 ### Primary Goal
 Einstellung des Agents als persönlicher Assistent und gemeinsame Umsetzung von Automatisierungen/Workflows.
 
+### 1-Year Vision
+Gesundheit ist das wichtigste.
+
+### Ideal Life
+Gesund sein.
+
 ### Current Projects
 Chill-Phase: Ideen sammeln, Projekte planen, nicht aktiv umsetzen. Exploration-Modus statt Execution-Modus.
 

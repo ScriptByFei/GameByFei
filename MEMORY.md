@@ -33,7 +33,7 @@
 [Important decisions and their reasoning]
 
 ### Things to Remember
-[Anything else important for continuity]
+- **2026-03-07 15:00** → Erinnerung an: GitHub einrichten + gh CLI installieren + Todoist CLI + API Token (siehe todoist/github Skills)
 
 ---
 
