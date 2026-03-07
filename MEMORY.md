@@ -11,7 +11,8 @@
 
 ### Preferences Learned
 - User wants notifications for new OpenClaw versions **AND** when exec: issue #9627 is fixed (cron job checks every 12h)
-- No manual OpenClaw updates until exec: issue confirmed fixed (2026-03-04)
+- **✅ UPDATE 2026-03-07:** Issue #9627 is CLOSED - exec: problem fixed! OpenClaw updates are now safe.
+- OpenClaw config backup created: `~/.openclaw/openclaw.json.backup-TIMESTAMP`
 - Communication: detailed but compact, no walls of text
 
 ### Important Dates
