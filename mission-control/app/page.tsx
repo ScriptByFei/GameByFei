@@ -1,65 +1,202 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import { KanbanColumn } from '@/components/KanbanColumn';
+import { TaskCard } from '@/components/TaskCard';
+import { NewTaskModal } from '@/components/NewTaskModal';
+import { Plus } from 'lucide-react';
+
+type Task = {
+  id: number;
+  title: string;
+  description: string | null;
+  status: 'todo' | 'in_progress' | 'done';
+  priority: number;
+  created_at: string;
+  updated_at: string;
+};
+
+type Column = {
+  id: 'todo' | 'in_progress' | 'done';
+  title: string;
+};
+
+const COLUMNS: Column[] = [
+  { id: 'todo', title: '📝 Todo' },
+  { id: 'in_progress', title: '⚡ In Progress' },
+  { id: 'done', title: '✅ Done' },
+];
 
 export default function Home() {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  async function fetchTasks() {
+    try {
+      const response = await fetch('/api/tasks');
+      const data = await response.json();
+      if (data.results) {
+        setTasks(data.results);
+      }
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
+
+  function handleDragStart(event: DragStartEvent) {
+    setActiveId(event.active.id as string);
+  }
+
+  async function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    setActiveId(null);
+
+    if (!over) return;
+
+    const taskId = parseInt(active.id as string, 10);
+    const newStatus = over.id as 'todo' | 'in_progress' | 'done';
+
+    const task = tasks.find((t) => t.id === taskId);
+    if (!task || task.status === newStatus) return;
+
+    // Optimistic update
+    setTasks((prev) =>
+      prev.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t))
+    );
+
+    // API update
+    try {
+      await fetch(`/api/tasks/${taskId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+    } catch (error) {
+      console.error('Error updating task:', error);
+      fetchTasks();
+    }
+  }
+
+  async function handleCreateTask(title: string, description: string, priority: number) {
+    try {
+      const response = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, description, priority }),
+      });
+      
+      if (response.ok) {
+        const newTask = await response.json();
+        setTasks((prev) => [newTask, ...prev]);
+        setIsModalOpen(false);
+      }
+    } catch (error) {
+      console.error('Error creating task:', error);
+    }
+  }
+
+  async function handleDeleteTask(id: number) {
+    try {
+      const response = await fetch(`/api/tasks/${id}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        setTasks((prev) => prev.filter((t) => t.id !== id));
+      }
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
+  }
+
+  const activeTask = activeId ? tasks.find((t) => t.id.toString() === activeId) : null;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+        <div className="text-slate-500 text-lg">Loading tasks...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-4xl font-bold text-slate-800">🚀 Mission Control</h1>
+            <p className="text-slate-500 mt-1">Task Dashboard</p>
+          </div>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <Plus size={20} />
+            New Task
+          </button>
         </div>
-      </main>
+
+        {/* Kanban Board */}
+        <DndContext
+          sensors={sensors}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
+          <div className="grid grid-cols-3 gap-6">
+            {COLUMNS.map((column) => (
+              <KanbanColumn
+                key={column.id}
+                id={column.id}
+                title={column.title}
+                tasks={tasks.filter((t) => t.status === column.id)}
+                onDeleteTask={handleDeleteTask}
+              />
+            ))}
+          </div>
+
+          <DragOverlay>
+            {activeTask ? (
+              <TaskCard
+                task={activeTask}
+                onDelete={() => {}}
+                isOverlay
+              />
+            ) : null}
+          </DragOverlay>
+        </DndContext>
+      </div>
+
+      <NewTaskModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleCreateTask}
+      />
     </div>
   );
 }
