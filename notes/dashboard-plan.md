@@ -157,28 +157,32 @@ fetch('http://localhost:3000/api/tasks?status=todo')
 
 ## 📁 Projektstruktur
 
+**Pfad:** `~/.openclaw/workspace/mission-control/`
+
 ```
-dashboard/
-├── app/
-│   ├── api/
-│   │   └── tasks/
-│   │       ├── route.ts          # GET/POST
-│   │       └── [id]/
-│   │           └── route.ts      # PATCH/DELETE
-│   ├── page.tsx                  # Kanban Board
-│   ├── layout.tsx                # Root Layout
-│   └── globals.css               # Tailwind
-├── components/
-│   ├── KanbanBoard.tsx           # Main Board
-│   ├── TaskCard.tsx              # Einzelne Karte
-│   ├── TaskColumn.tsx            # Spalte (Todo/InProgress/Done)
-│   └── NewTaskModal.tsx          # Form für neue Tasks
-├── lib/
-│   └── db.ts                     # SQLite Connection
-├── data/
-│   └── dashboard.sqlite          # Datenbank
-├── package.json
-└── next.config.js
+~/.openclaw/workspace/
+├── mission-control/              # Projekt Ordner
+│   ├── app/
+│   │   ├── api/
+│   │   │   └── tasks/
+│   │   │       ├── route.ts      # GET/POST
+│   │   │       └── [id]/
+│   │   │           └── route.ts  # PATCH/DELETE
+│   │   ├── page.tsx              # Kanban Board
+│   │   ├── layout.tsx            # Root Layout
+│   │   └── globals.css           # Tailwind
+│   ├── components/
+│   │   ├── KanbanBoard.tsx       # Main Board
+│   │   ├── TaskCard.tsx          # Einzelne Karte
+│   │   ├── TaskColumn.tsx        # Spalte (Todo/InProgress/Done)
+│   │   └── NewTaskModal.tsx      # Form für neue Tasks
+│   ├── lib/
+│   │   └── db.ts                 # SQLite Connection
+│   ├── data/
+│   │   └── mission-control.sqlite # Datenbank
+│   ├── package.json
+│   └── next.config.js
+└── .gitignore                    # mission-control/ ignorieren (optional)
 ```
 
 ---
@@ -186,9 +190,13 @@ dashboard/
 ## 🚀 Roadmap (Phasen)
 
 ### Phase 1: Setup & DB (1-2h)
-- [ ] Next.js Projekt initialisieren
+```
+Pfad: ~/.openclaw/workspace/mission-control/
+```
+- [ ] Next.js Projekt initialisieren (im Workspace)
 - [ ] SQLite einrichten (better-sqlite3)
 - [ ] Datenbank-Schema erstellen
+- [ ] `.gitignore` aktualisieren (node_modules, *.sqlite)
 
 ### Phase 2: Backend API (2-3h)
 - [ ] API Routes implementieren
@@ -214,10 +222,27 @@ dashboard/
 
 ## 📝 Nächste Schritte
 
-1. Codex öffnen und Projekt starten
-2. `npx create-next-app@latest dashboard --typescript --tailwind --app`
-3. SQLite einrichten
+1. In das Workspace Verzeichnis wechseln
+2. Next.js Projekt erstellen: `npx create-next-app@latest mission-control --typescript --tailwind --app`
+3. In `mission-control/` wechseln und SQLite einrichten
 4. API bauen
 5. UI bauen
+
+**Oder alle Schritte auf einmal mit Codex:**
+
+```bash
+cd ~/.openclaw/workspace
+npx create-next-app@latest mission-control --typescript --tailwind --eslint --app --src-dir=false --import-alias="@/*"
+cd mission-control
+npm install better-sqlite3
+npm install -D @types/better-sqlite3
+```
+
+**Wichtig:** `mission-control/` zu `.gitignore` hinzufügen (Node modules), nur Source-Code committen:
+
+```bash
+echo "mission-control/node_modules/" >> ~/.openclaw/workspace/.gitignore
+echo "mission-control/data/*.sqlite" >> ~/.openclaw/workspace/.gitignore
+```
 
 **Bereit zum Starten mit Codex?** 🚀
