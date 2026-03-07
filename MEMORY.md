@@ -37,6 +37,7 @@
 ### Things to Remember
 - **2026-03-07 15:00** → Todoist API Token konfiguriert (in ~/.config/todoist/.env)
 - **2026-03-07** → GitHub Remote konfiguriert + gh CLI installiert
+- **2026-03-07 12:18** → Dashboard Plan v2: Projekt in `workspace/mission-control/`, 5 Phasen mit Todoist
 
 ---
 
