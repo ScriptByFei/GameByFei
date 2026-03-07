@@ -10,7 +10,9 @@
 [Important background that affects how you help them]
 
 ### Preferences Learned
-[Things you've discovered about how they like to work]
+- User wants notifications for new OpenClaw versions **AND** when exec: issue #9627 is fixed (cron job checks every 12h)
+- No manual OpenClaw updates until exec: issue confirmed fixed (2026-03-04)
+- Communication: detailed but compact, no walls of text
 
 ### Important Dates
 [Birthdays, anniversaries, deadlines they care about]
