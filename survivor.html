@@ -186,38 +186,51 @@ function drawPlayer(){
   if(inv>0&&frame%5<2)return;
   ctx.save();
   ctx.translate(x,y);
-  // Glow
-  const glow=ctx.createRadialGradient(0,0,0,0,0,sz*2.2);
-  glow.addColorStop(0,'rgba(244,114,182,0.28)');
-  glow.addColorStop(1,'rgba(244,114,182,0)');
+  // Outer glow
+  const glow=ctx.createRadialGradient(0,0,0,0,0,sz*2.5);
+  glow.addColorStop(0,'rgba(219,39,119,0.22)');
+  glow.addColorStop(1,'rgba(219,39,119,0)');
   ctx.fillStyle=glow;
-  ctx.beginPath();ctx.arc(0,0,sz*2.2,0,Math.PI*2);ctx.fill();
-  // Brain body — left hemisphere
+  ctx.beginPath();ctx.arc(0,0,sz*2.5,0,Math.PI*2);ctx.fill();
+  // Brain base — rounded brain shape
   ctx.fillStyle='#f472b6';
-  ctx.beginPath();ctx.ellipse(-sz*0.22,0,sz*0.72,sz*0.9,0,0,Math.PI*2);ctx.fill();
-  // Brain body — right hemisphere
+  ctx.beginPath();ctx.arc(0,sz*0.15,sz*0.88,0,Math.PI*2);ctx.fill();
+  // Left lobe
   ctx.fillStyle='#f472b6';
-  ctx.beginPath();ctx.ellipse(sz*0.22,0,sz*0.72,sz*0.9,0,0,Math.PI*2);ctx.fill();
-  // Brain folds — left
-  ctx.strokeStyle='#db2777';ctx.lineWidth=sz*0.1;ctx.lineCap='round';
-  ctx.beginPath();ctx.moveTo(-sz*0.6,-sz*0.5);ctx.quadraticCurveTo(-sz*0.35,-sz*0.15,-sz*0.55,sz*0.2);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(-sz*0.45,-sz*0.7);ctx.quadraticCurveTo(-sz*0.2,-sz*0.35,-sz*0.4,sz*0.0);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(-sz*0.25,-sz*0.75);ctx.quadraticCurveTo(0,-sz*0.5,-sz*0.15,sz*0.1);ctx.stroke();
-  // Brain folds — right
-  ctx.beginPath();ctx.moveTo(sz*0.6,-sz*0.5);ctx.quadraticCurveTo(sz*0.35,-sz*0.15,sz*0.55,sz*0.2);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(sz*0.45,-sz*0.7);ctx.quadraticCurveTo(sz*0.2,-sz*0.35,sz*0.4,sz*0.0);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(sz*0.25,-sz*0.75);ctx.quadraticCurveTo(0,-sz*0.5,sz*0.15,sz*0.1);ctx.stroke();
-  // Center sulcus
-  ctx.strokeStyle='#db2777';ctx.lineWidth=sz*0.06;
-  ctx.beginPath();ctx.moveTo(0,-sz*0.85);ctx.lineTo(0,sz*0.85);ctx.stroke();
-  // Eye (follows aim angle)
-  ctx.save();ctx.rotate(angle);
-  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(sz*0.3,-sz*0.05,sz*0.22,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='#1e1b4b';ctx.beginPath();ctx.arc(sz*0.36,-sz*0.05,sz*0.12,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(sz*0.39,-sz*0.08,sz*0.04,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.ellipse(-sz*0.52,0,sz*0.4,sz*0.65,0.3,0,Math.PI*2);ctx.fill();
+  // Right lobe
+  ctx.beginPath();ctx.ellipse(sz*0.52,0,sz*0.4,sz*0.65,-0.3,0,Math.PI*2);ctx.fill();
+  // Top center lobe
+  ctx.beginPath();ctx.ellipse(0,-sz*0.5,sz*0.38,sz*0.35,0,0,Math.PI*2);ctx.fill();
+  // Brain folds — gyri lines (darker pink)
+  ctx.strokeStyle='#db2777';ctx.lineWidth=sz*0.07;ctx.lineCap='round';
+  ctx.beginPath();ctx.arc(-sz*0.25,-sz*0.15,sz*0.28,Math.PI*0.6,Math.PI*1.7);ctx.stroke();
+  ctx.beginPath();ctx.arc(sz*0.25,-sz*0.15,sz*0.28,Math.PI*1.3,Math.PI*2.4);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(-sz*0.15,-sz*0.55);ctx.quadraticCurveTo(0,-sz*0.35,sz*0.15,-sz*0.55);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(-sz*0.55,sz*0.1);ctx.quadraticCurveTo(-sz*0.25,sz*0.35,0,sz*0.15);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(sz*0.55,sz*0.1);ctx.quadraticCurveTo(sz*0.25,sz*0.35,0,sz*0.15);ctx.stroke();
+  // Cute face in center
+  const blink=(frame%180<6); // blink every 3s
+  const eyeH=blink?sz*0.04:sz*0.1;
+  // Left eye white
+  ctx.fillStyle='#fff';ctx.beginPath();ctx.ellipse(-sz*0.18,sz*0.05,sz*0.13,eyeH,0,0,Math.PI*2);ctx.fill();
+  // Right eye white
+  ctx.beginPath();ctx.ellipse(sz*0.18,sz*0.05,sz*0.13,eyeH,0,0,Math.PI*2);ctx.fill();
+  // Pupils
+  if(!blink){
+    ctx.fillStyle='#1e1b4b';
+    ctx.beginPath();ctx.arc(-sz*0.14,sz*0.05,sz*0.065,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(sz*0.22,sz*0.05,sz*0.065,0,Math.PI*2);ctx.fill();
+    // Eye shine
+    ctx.fillStyle='#fff';
+    ctx.beginPath();ctx.arc(-sz*0.16,sz*0.02,sz*0.025,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(sz*0.2,sz*0.02,sz*0.025,0,Math.PI*2);ctx.fill();
+  }
+  // Smile
+  ctx.strokeStyle='#be185d';ctx.lineWidth=sz*0.055;ctx.lineCap='round';
+  ctx.beginPath();ctx.arc(sz*0.02,sz*0.15,sz*0.15,Math.PI*0.15,Math.PI*0.85);ctx.stroke();
   ctx.restore();
-  ctx.restore();
-  // Crosshair
+  // Crosshair (outside save/translate)
   const cx=x+Math.cos(angle)*(sz+18*SC),cy2=y+Math.sin(angle)*(sz+18*SC);
   ctx.strokeStyle='rgba(255,255,255,0.5)';ctx.lineWidth=1.5*SC;
   ctx.beginPath();ctx.arc(cx,cy2,8*SC,0,Math.PI*2);ctx.stroke();
