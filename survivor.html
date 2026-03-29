@@ -147,11 +147,10 @@ function update(){
   if(state!=='play')return;
   frame++;gameTime++;
   if(shakeT>0){shakeT--;shakeX=(Math.random()-0.5)*shakeT*0.5;shakeY=(Math.random()-0.5)*shakeT*0.5;}else{shakeX=0;shakeY=0;}
-  let moving=false;
-  if(touch.on&&(Math.abs(touch.dx)>5||Math.abs(touch.dy)>5)){const len=Math.hypot(touch.dx,touch.dy);player.x+=(touch.dx/len)*player.spd;player.y+=(touch.dy/len)*player.spd;if(Math.hypot(touch.dx,touch.dy)>15){lastAimAngle=Math.atan2(touch.dy,touch.dx);}player.angle=lastAimAngle;moving=true;}
+  if(touch.on&&(Math.abs(touch.dx)>5||Math.abs(touch.dy)>5)){const len=Math.hypot(touch.dx,touch.dy);player.x+=(touch.dx/len)*player.spd;player.y+=(touch.dy/len)*player.spd;}
   player.x=Math.max(player.sz,Math.min(W-player.sz,player.x));player.y=Math.max(player.sz,Math.min(H-player.sz,player.y));
   if(player.inv>0)player.inv--;
-  if(!moving){let near=null,nd=Infinity;enemies.forEach(e=>{const d=Math.hypot(e.x-player.x,e.y-player.y);if(d<nd){nd=d;near=e;}});if(boss){const d=Math.hypot(boss.x-player.x,boss.y-player.y);if(d<nd){nd=d;near=boss;}}if(near){player.angle=Math.atan2(near.y-player.y,near.x-player.x);lastAimAngle=player.angle;}}else{player.angle=lastAimAngle;}
+  let near=null,nd=Infinity;enemies.forEach(e=>{const d=Math.hypot(e.x-player.x,e.y-player.y);if(d<nd){nd=d;near=e;}});if(boss){const d=Math.hypot(boss.x-player.x,boss.y-player.y);if(d<nd){nd=d;near=boss;}}if(near){player.angle=Math.atan2(near.y-player.y,near.x-player.x);lastAimAngle=player.angle;}
   shoot();upWeap();
   if(frame%600===0&&frame>0){wave++;bossSpawnedThisWave=false;eliteSpawnedThisWave=false;delete window['bossWave_'+wave];}
   const isBossWave=wave>0&&wave%10===0;
