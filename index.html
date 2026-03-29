@@ -494,8 +494,8 @@ function update() {
     bear.isJumping = false;
   }
   
-  // Spawn obstacles (wider spacing for fair gameplay)
-  if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < W - 280 * scale - Math.random() * 100 * scale) {
+  // Spawn obstacles (generous spacing for fair gameplay)
+  if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < W - 550 * scale) {
     obstacles.push(createObstacle(W + 50));
   }
   
