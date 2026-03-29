@@ -33,6 +33,7 @@ function setHS(v){localStorage.setItem('survivorbyfei_hs',v);}
 
 let state='menu',player,enemies,projs,orbs,parts,wave,score,frame,gameTime,level,xp,xpNeed,weapons;
 let touch={on:false,sx:0,sy:0,cx:0,cy:0,dx:0,dy:0};
+let lastAimAngle=0;
 let highScore=getHS(),bossActive=false,boss=null,levelUpOptions=[],selectedOption=-1;
 let shakeT=0,shakeX=0,shakeY=0,dmgNums=[],bossSpawnedThisWave=false,eliteSpawnedThisWave=false;
 let paused=false,soundEnabled=true;
@@ -147,10 +148,10 @@ function update(){
   frame++;gameTime++;
   if(shakeT>0){shakeT--;shakeX=(Math.random()-0.5)*shakeT*0.5;shakeY=(Math.random()-0.5)*shakeT*0.5;}else{shakeX=0;shakeY=0;}
   let moving=false;
-  if(touch.on&&(Math.abs(touch.dx)>5||Math.abs(touch.dy)>5)){const len=Math.hypot(touch.dx,touch.dy);player.x+=(touch.dx/len)*player.spd;player.y+=(touch.dy/len)*player.spd;player.angle=Math.atan2(touch.dy,touch.dx);moving=true;}
+  if(touch.on&&(Math.abs(touch.dx)>5||Math.abs(touch.dy)>5)){const len=Math.hypot(touch.dx,touch.dy);player.x+=(touch.dx/len)*player.spd;player.y+=(touch.dy/len)*player.spd;if(Math.hypot(touch.dx,touch.dy)>15){lastAimAngle=Math.atan2(touch.dy,touch.dx);}player.angle=lastAimAngle;moving=true;}
   player.x=Math.max(player.sz,Math.min(W-player.sz,player.x));player.y=Math.max(player.sz,Math.min(H-player.sz,player.y));
   if(player.inv>0)player.inv--;
-  if(!moving){let near=null,nd=Infinity;enemies.forEach(e=>{const d=Math.hypot(e.x-player.x,e.y-player.y);if(d<nd){nd=d;near=e;}});if(boss){const d=Math.hypot(boss.x-player.x,boss.y-player.y);if(d<nd){nd=d;near=boss;}}if(near)player.angle=Math.atan2(near.y-player.y,near.x-player.x);}
+  if(!moving){let near=null,nd=Infinity;enemies.forEach(e=>{const d=Math.hypot(e.x-player.x,e.y-player.y);if(d<nd){nd=d;near=e;}});if(boss){const d=Math.hypot(boss.x-player.x,boss.y-player.y);if(d<nd){nd=d;near=boss;}}if(near){player.angle=Math.atan2(near.y-player.y,near.x-player.x);lastAimAngle=player.angle;}}else{player.angle=lastAimAngle;}
   shoot();upWeap();
   if(frame%600===0&&frame>0){wave++;bossSpawnedThisWave=false;eliteSpawnedThisWave=false;delete window['bossWave_'+wave];}
   const isBossWave=wave>0&&wave%10===0;
@@ -233,7 +234,7 @@ canvas.addEventListener('touchstart',e=>{e.preventDefault();ACinit();const t=e.c
   touch.on=true;touch.sx=t.clientX;touch.sy=t.clientY;touch.cx=t.clientX;touch.cy=t.clientY;touch.dx=0;touch.dy=0;
 },{passive:false});
 canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!touch.on)return;const t=e.changedTouches[0];touch.cx=t.clientX;touch.cy=t.clientY;touch.dx=touch.cx-touch.sx;touch.dy=touch.cy-touch.sy;},{passive:false});
-canvas.addEventListener('touchend',e=>{e.preventDefault();touch.on=false;touch.dx=0;touch.dy=0;},{passive:false});
+canvas.addEventListener('touchend',e=>{e.preventDefault();touch.on=false;touch.dx=0;touch.dy=0;lastAimAngle=player.angle;},{passive:false});
 canvas.addEventListener('mousedown',e=>{ACinit();const pbSz=22*SC,pbX=W-pbSz-12*SC,pbY=12*SC;
   if(state==='paused'){
     const bw=Math.min(220*SC,W-60*SC),bh=60*SC,gap=14*SC,startY=H*0.43,startX=W/2-bw/2;
@@ -253,7 +254,7 @@ canvas.addEventListener('mousemove',e=>{if(!touch.on)return;touch.cx=e.clientX;t
 canvas.addEventListener('mouseup',()=>{touch.on=false;touch.dx=0;touch.dy=0;});
 document.addEventListener('keydown',e=>{if(e.code==='Space'||e.code==='Enter'){ACinit();if(state==='menu'){state='play';init();}else if(state==='gameover')state='menu';}if(e.code==='Escape'&&(state==='play'||state==='paused')){paused=!paused;state=paused?'paused':'play';}if(e.code==='KeyM'){soundEnabled=!soundEnabled;}if(state==='levelup'&&e.key>='1'&&e.key<='3'){selectLevelUp(parseInt(e.key)-1);}});
 const keys={};document.addEventListener('keydown',e=>{keys[e.code]=true;});document.addEventListener('keyup',e=>{keys[e.code]=false;});
-function handleKeys(){if(state!=='play')return;if(keys['ArrowLeft']||keys['KeyA']){player.x-=player.spd;player.angle=Math.PI;touch.on=false;}if(keys['ArrowRight']||keys['KeyD']){player.x+=player.spd;player.angle=0;touch.on=false;}if(keys['ArrowUp']||keys['KeyW']){player.y-=player.spd;player.angle=-Math.PI/2;touch.on=false;}if(keys['ArrowDown']||keys['KeyS']){player.y+=player.spd;player.angle=Math.PI/2;touch.on=false;}player.x=Math.max(player.sz,Math.min(W-player.sz,player.x));player.y=Math.max(player.sz,Math.min(H-player.sz,player.y));}
+function handleKeys(){if(state!=='play')return;if(keys['ArrowLeft']||keys['KeyA']){player.x-=player.spd;player.angle=Math.PI;lastAimAngle=Math.PI;touch.on=false;}if(keys['ArrowRight']||keys['KeyD']){player.x+=player.spd;player.angle=0;lastAimAngle=0;touch.on=false;}if(keys['ArrowUp']||keys['KeyW']){player.y-=player.spd;player.angle=-Math.PI/2;lastAimAngle=-Math.PI/2;touch.on=false;}if(keys['ArrowDown']||keys['KeyS']){player.y+=player.spd;player.angle=Math.PI/2;lastAimAngle=Math.PI/2;touch.on=false;}player.x=Math.max(player.sz,Math.min(W-player.sz,player.x));player.y=Math.max(player.sz,Math.min(H-player.sz,player.y));}
 function loop(){handleKeys();update();render();requestAnimationFrame(loop);}
 init();highScore=getHS();loop();
 </script>
