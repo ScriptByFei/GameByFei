@@ -190,14 +190,65 @@ function drawParts(){parts.forEach(p=>{ctx.globalAlpha=Math.max(0,p.life);ctx.fi
 function drawDmgNums(){dmgNums.forEach(d=>{ctx.globalAlpha=Math.max(0,d.life);ctx.fillStyle=d.col;ctx.font=`bold ${14*SC}px system-ui`;ctx.textAlign='center';ctx.fillText(d.dmg,d.x,d.y);});ctx.globalAlpha=1;}
 function drawUI(){const hbX=14*SC,hbY=14*SC,hbW=140*SC,hbH=13*SC;ctx.fillStyle='rgba(0,0,0,0.55)';ctx.beginPath();ctx.roundRect(hbX,hbY,hbW,hbH,4*SC);ctx.fill();const hr=Math.max(0,player.hp/player.maxHp);ctx.fillStyle=hr>0.5?'#22c55e':hr>0.25?'#f97316':'#ef4444';ctx.beginPath();ctx.roundRect(hbX,hbY,hbW*hr,hbH,4*SC);ctx.fill();ctx.fillStyle='#fff';ctx.font=`bold ${11*SC}px system-ui`;ctx.textAlign='center';ctx.fillText(Math.ceil(player.hp)+'/'+player.maxHp,hbX+hbW/2,hbY+hbH-2*SC);ctx.textAlign='right';ctx.fillStyle='#fff';ctx.font=`bold ${15*SC}px system-ui`;ctx.fillText('LV '+level,W-14*SC,26*SC);const xbX=W-14*SC-100*SC,xbY=32*SC,xbW=100*SC,xbH=7*SC;ctx.fillStyle='rgba(0,0,0,0.45)';ctx.beginPath();ctx.roundRect(xbX,xbY,xbW,xbH,3*SC);ctx.fill();ctx.fillStyle='#22c55e';ctx.beginPath();ctx.roundRect(xbX,xbY,xbW*(xp/xpNeed),xbH,3*SC);ctx.fill();ctx.textAlign='center';ctx.fillStyle='#fff';ctx.font=`bold ${32*SC}px system-ui`;ctx.shadowColor='rgba(0,0,0,0.7)';ctx.shadowBlur=8;ctx.fillText(score,W/2,44*SC);ctx.shadowBlur=0;ctx.font=`${12*SC}px system-ui`;ctx.fillStyle='rgba(255,255,255,0.4)';ctx.fillText('Wave '+wave+'  •  '+(gameTime/60|0)+'m '+(gameTime%60)+'s',W/2,63*SC);const iy=H-38*SC;weapons.forEach((w,i)=>{const k=Object.keys(WDEF).find(k=>WDEF[k].kind===w.kind);const col=WDEF[k]?WDEF[k].col:w.col;const ix=14*SC+i*36*SC;ctx.fillStyle=col+'88';ctx.beginPath();ctx.arc(ix,iy,14*SC,0,Math.PI*2);ctx.fill();ctx.fillStyle=col;ctx.beginPath();ctx.arc(ix,iy,10*SC,0,Math.PI*2);ctx.fill();if(w.lvl>1){ctx.fillStyle='#FFD700';ctx.font=`bold ${9*SC}px system-ui`;ctx.textAlign='center';ctx.fillText(w.lvl,ix,iy+3*SC);}});if(touch.on){ctx.strokeStyle='rgba(255,255,255,0.12)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(touch.sx,touch.sy,50*SC,0,Math.PI*2);ctx.stroke();ctx.fillStyle='rgba(255,255,255,0.22)';ctx.beginPath();ctx.arc(touch.sx+touch.dx,touch.sy+touch.dy,20*SC,0,Math.PI*2);ctx.fill();}};const pbSz=22*SC,pbX=W-pbSz-12*SC,pbY=12*SC;ctx.fillStyle='rgba(0,0,0,0.5)';ctx.beginPath();ctx.roundRect(pbX,pbY,pbSz,pbSz,6*SC);ctx.fill();ctx.fillStyle=soundEnabled?'rgba(255,255,255,0.85)':'rgba(255,100,100,0.85)';ctx.beginPath();ctx.roundRect(pbX,pbY,pbSz,pbSz,6*SC);ctx.fill();ctx.fillStyle='rgba(0,0,0,0.7)';ctx.font=`${12*SC}px system-ui`;ctx.textAlign='center';ctx.fillText(soundEnabled?'⏸':'🔇',pbX+pbSz/2,pbY+pbSz/2+4*SC);
 function drawMenu(){ctx.fillStyle='rgba(0,0,0,0.65)';ctx.fillRect(0,0,W,H);ctx.textAlign='center';ctx.fillStyle='#fff';ctx.font=`bold ${40*SC}px system-ui`;ctx.fillText('⚔️ SurvivorByFei',W/2,H*0.3);ctx.font=`${22*SC}px system-ui`;ctx.fillStyle='rgba(255,255,255,0.75)';ctx.fillText('Tap to Start',W/2,H*0.52);ctx.font=`${15*SC}px system-ui`;ctx.fillStyle='rgba(255,255,255,0.4)';ctx.fillText('Best: '+highScore,W/2,H*0.63);ctx.font=`${12*SC}px system-ui`;ctx.fillStyle='rgba(255,255,255,0.28)';ctx.fillText('Left side = move  •  Auto-fire toward aim',W/2,H*0.76);}
-function drawPause(){ctx.fillStyle='rgba(0,0,0,0.6)';ctx.fillRect(0,0,W,H);ctx.textAlign='center';ctx.fillStyle='#fff';ctx.font=`bold ${38*SC}px system-ui`;ctx.fillText('⏸ PAUSED',W/2,H*0.43);ctx.font=`${18*SC}px system-ui`;ctx.fillStyle='rgba(255,255,255,0.55)';ctx.fillText('ESC to Resume  •  M for Sound',W/2,H*0.54);ctx.font=`${15*SC}px system-ui`;ctx.fillStyle='rgba(255,255,255,0.35)';ctx.fillText('Tap ⏸ button to resume',W/2,H*0.63);}
+function drawPause(){
+  ctx.fillStyle='rgba(0,0,0,0.72)';ctx.fillRect(0,0,W,H);
+  ctx.textAlign='center';ctx.fillStyle='#FFD700';ctx.font=`bold ${36*SC}px system-ui`;
+  ctx.fillText('⏸ PAUSED',W/2,H*0.33);
+  const bw=Math.min(220*SC,W-60*SC),bh=60*SC,gap=14*SC,startY=H*0.43,startX=W/2-bw/2;
+  // Resume button
+  ctx.fillStyle='#22c55e33';ctx.strokeStyle='#22c55e';ctx.lineWidth=2*SC;
+  ctx.beginPath();ctx.roundRect(startX,startY,bw,bh,10*SC);ctx.fill();ctx.stroke();
+  ctx.fillStyle='#22c55e';ctx.font=`bold ${20*SC}px system-ui`;
+  ctx.fillText('▶ Resume',W/2,startY+bh/2+7*SC);
+  // Sound toggle button
+  ctx.fillStyle=soundEnabled?'#3b82f633':'#ef444433';ctx.strokeStyle=soundEnabled?'#3b82f6':'#ef4444';ctx.lineWidth=2*SC;
+  ctx.beginPath();ctx.roundRect(startX,startY+bh+gap,bw,bh,10*SC);ctx.fill();ctx.stroke();
+  ctx.fillStyle=soundEnabled?'#3b82f6':'#ef4444';ctx.font=`bold ${20*SC}px system-ui`;
+  ctx.fillText(soundEnabled?'🔊 Sound: ON':'🔇 Sound: OFF',W/2,startY+bh+gap+bh/2+7*SC);
+  // Quit button
+  ctx.fillStyle='rgba(255,255,255,0.08)';ctx.strokeStyle='rgba(255,255,255,0.3)';ctx.lineWidth=1.5*SC;
+  ctx.beginPath();ctx.roundRect(startX,startY+2*(bh+gap),bw,bh,10*SC);ctx.fill();ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font=`${18*SC}px system-ui`;
+  ctx.fillText('Quit to Menu',W/2,startY+2*(bh+gap)+bh/2+6*SC);
+  ctx.fillStyle='rgba(255,255,255,0.3)';ctx.font=`${12*SC}px system-ui`;
+  ctx.fillText('ESC also resumes',W/2,H*0.88);
+}
 function drawGO(){ctx.fillStyle='rgba(0,0,0,0.72)';ctx.fillRect(0,0,W,H);const cy=H*0.32;ctx.textAlign='center';ctx.fillStyle='#ef4444';ctx.font=`bold ${44*SC}px system-ui`;ctx.fillText('💀 Game Over',W/2,cy);ctx.fillStyle='#fff';ctx.font=`${28*SC}px system-ui`;ctx.fillText(score+' pts',W/2,cy+62*SC);ctx.fillStyle='#22c55e';ctx.font=`${20*SC}px system-ui`;ctx.fillText('Best: '+getHS(),W/2,cy+104*SC);ctx.fillStyle='rgba(255,255,255,0.6)';ctx.font=`${17*SC}px system-ui`;ctx.fillText('Tap to Retry',W/2,cy+160*SC);}
 function drawLevelUp(){ctx.fillStyle='rgba(0,0,0,0.78)';ctx.fillRect(0,0,W,H);ctx.textAlign='center';ctx.fillStyle='#FFD700';ctx.font=`bold ${34*SC}px system-ui`;ctx.fillText('⬆️ LEVEL UP!',W/2,H*0.22);ctx.font=`${16*SC}px system-ui`;ctx.fillStyle='rgba(255,255,255,0.5)';ctx.fillText('Wähle eine Option',W/2,H*0.31);const bw=Math.min(260*SC,W-40*SC),bh=70*SC,startY=H*0.38,startX=W/2-bw/2;levelUpOptions.forEach((opt,i)=>{const y=startY+i*(bh+12*SC),hx=startX;ctx.fillStyle=opt.col+'33';ctx.strokeStyle=opt.col;ctx.lineWidth=2*SC;ctx.beginPath();ctx.roundRect(hx,y,bw,bh,10*SC);ctx.fill();ctx.stroke();ctx.fillStyle=opt.col;ctx.font=`bold ${20*SC}px system-ui`;ctx.textAlign='center';ctx.fillText('  '+(i+1)+'.  '+opt.label,W/2,y+bh/2+6*SC);});ctx.fillStyle='rgba(255,255,255,0.3)';ctx.font=`${12*SC}px system-ui`;ctx.fillText('Tap to select',W/2,H*0.88);}
-function render(){ctx.save();if(shakeT>0)ctx.translate(shakeX,shakeY);drawBG();if(state==='menu'){player={x:W/2,y:H/2,sz:22*SC,hp:100,maxHp:100,spd:3.8*SC,inv:0,angle:0};enemies.forEach(drawEnemy);orbs.forEach(drawOrb);drawPlayer();drawMenu();}else if(state==='play'||state==='gameover'){if(paused){drawPause();ctx.restore();return;}orbs.forEach(drawOrb);enemies.forEach(drawEnemy);if(boss)drawBoss();projs.forEach(drawProj);drawPlayer();drawParts();drawDmgNums();drawUI();if(state==='gameover')drawGO();}else if(state==='levelup'){orbs.forEach(drawOrb);enemies.forEach(drawEnemy);if(boss)drawBoss();projs.forEach(drawProj);drawPlayer();drawParts();drawDmgNums();drawUI();drawLevelUp();}ctx.restore();}
-canvas.addEventListener('touchstart',e=>{e.preventDefault();ACinit();const t=e.changedTouches[0];const pbSz=22*SC,pbX=W-pbSz-12*SC,pbY=12*SC;if(t.clientX>=pbX&&t.clientX<=pbX+pbSz&&t.clientY>=pbY&&t.clientY<=pbY+pbSz){if(state==='play'){paused=true;state='paused';return;}if(state==='paused'){paused=false;state='play';return;}}if(state==='menu'){state='play';init();return;}if(state==='gameover'){state='menu';return;}if(state==='levelup'){const bw=Math.min(260*SC,W-40*SC),bh=70*SC,startY=H*0.38,startX=W/2-bw/2,lv=t.clientY-startY;const opt=Math.floor(lv/(bh+12*SC));selectLevelUp(opt);return;}touch.on=true;touch.sx=t.clientX;touch.sy=t.clientY;touch.cx=t.clientX;touch.cy=t.clientY;touch.dx=0;touch.dy=0;},{passive:false});
+function render(){ctx.save();if(shakeT>0)ctx.translate(shakeX,shakeY);drawBG();if(state==='menu'){player={x:W/2,y:H/2,sz:22*SC,hp:100,maxHp:100,spd:3.8*SC,inv:0,angle:0};enemies.forEach(drawEnemy);orbs.forEach(drawOrb);drawPlayer();drawMenu();}else if(state==='play'||state==='gameover'){if(paused){drawPause();ctx.restore();return;}orbs.forEach(drawOrb);enemies.forEach(drawEnemy);if(boss)drawBoss();projs.forEach(drawProj);drawPlayer();drawParts();drawDmgNums();drawUI();if(state==='gameover')drawGO();}else if(state==='paused'){orbs.forEach(drawOrb);enemies.forEach(drawEnemy);if(boss)drawBoss();projs.forEach(drawProj);drawPlayer();drawParts();drawDmgNums();drawUI();drawPause();}else if(state==='levelup'){orbs.forEach(drawOrb);enemies.forEach(drawEnemy);if(boss)drawBoss();projs.forEach(drawProj);drawPlayer();drawParts();drawDmgNums();drawUI();drawLevelUp();}ctx.restore();}
+canvas.addEventListener('touchstart',e=>{e.preventDefault();ACinit();const t=e.changedTouches[0];
+  const pbSz=22*SC,pbX=W-pbSz-12*SC,pbY=12*SC;
+  if(state==='paused'){
+    const bw=Math.min(220*SC,W-60*SC),bh=60*SC,gap=14*SC,startY=H*0.43,startX=W/2-bw/2;
+    const y=t.clientY-startY;
+    if(y>=0&&y<bh){paused=false;state='play';return;}
+    if(y>=bh+gap&&y<bh+gap+bh){soundEnabled=!soundEnabled;return;}
+    if(y>=2*(bh+gap)&&y<2*(bh+gap)+bh){state='menu';paused=false;return;}
+    return;
+  }
+  if(t.clientX>=pbX&&t.clientX<=pbX+pbSz&&t.clientY>=pbY&&t.clientY<=pbY+pbSz){if(state==='play'){paused=true;state='paused';return;}if(state==='paused'){paused=false;state='play';return;}}
+  if(state==='menu'){state='play';init();return;}
+  if(state==='gameover'){state='menu';return;}
+  if(state==='levelup'){const bw=Math.min(260*SC,W-40*SC),bh=70*SC,startY=H*0.38,startX=W/2-bw/2,lv=t.clientY-startY;const opt=Math.floor(lv/(bh+12*SC));selectLevelUp(opt);return;}
+  touch.on=true;touch.sx=t.clientX;touch.sy=t.clientY;touch.cx=t.clientX;touch.cy=t.clientY;touch.dx=0;touch.dy=0;
+},{passive:false});
 canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!touch.on)return;const t=e.changedTouches[0];touch.cx=t.clientX;touch.cy=t.clientY;touch.dx=touch.cx-touch.sx;touch.dy=touch.cy-touch.sy;},{passive:false});
 canvas.addEventListener('touchend',e=>{e.preventDefault();touch.on=false;touch.dx=0;touch.dy=0;},{passive:false});
-canvas.addEventListener('mousedown',e=>{ACinit();const pbSz=22*SC,pbX=W-pbSz-12*SC,pbY=12*SC;if(e.clientX>=pbX&&e.clientX<=pbX+pbSz&&e.clientY>=pbY&&e.clientY<=pbY+pbSz){if(state==='play'){paused=true;state='paused';return;}if(state==='paused'){paused=false;state='play';return;}}if(state==='menu'){state='play';init();return;}if(state==='gameover'){state='menu';return;}if(state==='levelup'){const bw=Math.min(260*SC,W-40*SC),bh=70*SC,startY=H*0.38,startX=W/2-bw/2,lv=e.clientY-startY;const opt=Math.floor(lv/(bh+12*SC));selectLevelUp(opt);return;}touch.on=true;touch.sx=e.clientX;touch.sy=e.clientY;touch.cx=e.clientX;touch.cy=e.clientY;touch.dx=0;touch.dy=0;});
+canvas.addEventListener('mousedown',e=>{ACinit();const pbSz=22*SC,pbX=W-pbSz-12*SC,pbY=12*SC;
+  if(state==='paused'){
+    const bw=Math.min(220*SC,W-60*SC),bh=60*SC,gap=14*SC,startY=H*0.43,startX=W/2-bw/2;
+    const y=e.clientY-startY;
+    if(y>=0&&y<bh){paused=false;state='play';return;}
+    if(y>=bh+gap&&y<bh+gap+bh){soundEnabled=!soundEnabled;return;}
+    if(y>=2*(bh+gap)&&y<2*(bh+gap)+bh){state='menu';paused=false;return;}
+    return;
+  }
+  if(e.clientX>=pbX&&e.clientX<=pbX+pbSz&&e.clientY>=pbY&&e.clientY<=pbY+pbSz){if(state==='play'){paused=true;state='paused';return;}if(state==='paused'){paused=false;state='play';return;}}
+  if(state==='menu'){state='play';init();return;}
+  if(state==='gameover'){state='menu';return;}
+  if(state==='levelup'){const bw=Math.min(260*SC,W-40*SC),bh=70*SC,startY=H*0.38,startX=W/2-bw/2,lv=e.clientY-startY;const opt=Math.floor(lv/(bh+12*SC));selectLevelUp(opt);return;}
+  touch.on=true;touch.sx=e.clientX;touch.sy=e.clientY;touch.cx=e.clientX;touch.cy=e.clientY;touch.dx=0;touch.dy=0;
+});
 canvas.addEventListener('mousemove',e=>{if(!touch.on)return;touch.cx=e.clientX;touch.cy=e.clientY;touch.dx=touch.cx-touch.sx;touch.dy=touch.cy-touch.sy;});
 canvas.addEventListener('mouseup',()=>{touch.on=false;touch.dx=0;touch.dy=0;});
 document.addEventListener('keydown',e=>{if(e.code==='Space'||e.code==='Enter'){ACinit();if(state==='menu'){state='play';init();}else if(state==='gameover')state='menu';}if(e.code==='Escape'&&(state==='play'||state==='paused')){paused=!paused;state=paused?'paused':'play';}if(e.code==='KeyM'){soundEnabled=!soundEnabled;}if(state==='levelup'&&e.key>='1'&&e.key<='3'){selectLevelUp(parseInt(e.key)-1);}});
