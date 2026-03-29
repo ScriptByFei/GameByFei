@@ -31,6 +31,10 @@ const sfx={shoot:()=>{if(!soundEnabled)return;tone(220,0.05,'square',0.05);},hit
 
 function getHS(){return parseInt(localStorage.getItem('survivorbyfei_hs')||'0');}
 function setHS(v){localStorage.setItem('survivorbyfei_hs',v);}
+const SOUND_KEY='survivorbyfei_sound';
+function getSoundPref(){const v=localStorage.getItem(SOUND_KEY);return v===null?true:v==='1';}
+function setSoundPref(v){localStorage.setItem(SOUND_KEY,v?'1':'0');}
+function toggleSound(){soundEnabled=!soundEnabled;setSoundPref(soundEnabled);}
 
 let state='menu',player,enemies,projs,orbs,parts,wave,score,frame,gameTime,level,xp,xpNeed,weapons;
 let nickInput='',nickCursor=0,nickChars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-',leaderboard=[],lbLoading=false;
@@ -40,7 +44,7 @@ let touch={on:false,sx:0,sy:0,cx:0,cy:0,dx:0,dy:0};
 let lastAimAngle=0;
 let highScore=getHS(),bossActive=false,boss=null,levelUpOptions=[],selectedOption=-1;
 let shakeT=0,shakeX=0,shakeY=0,dmgNums=[],bossSpawnedThisWave=false,eliteSpawnedThisWave=false;
-let paused=false,soundEnabled=true;
+let paused=false,soundEnabled=getSoundPref();
 
 const WDEF={
   magic:{col:'#a855f7',cd:50,dmg:15,spd:6,sz:9,cnt:1,kind:'ball',name:'Magic'},
@@ -356,9 +360,16 @@ function drawMenu(){
   ctx.beginPath();ctx.roundRect(W/2-lbW/2,lbY,lbW,lbH,8*SC);ctx.fill();ctx.stroke();
   ctx.fillStyle='#f472b6';ctx.font=`${14*SC}px system-ui`;
   ctx.fillText('🌐 Full Leaderboard',W/2,lbY+lbH/2+5*SC);
+  // Sound toggle button
+  const sndY=H*0.78,sndW=160*SC,sndH=40*SC;
+  ctx.fillStyle=soundEnabled?'#3b82f622':'#ef444422';
+  ctx.strokeStyle=soundEnabled?'#3b82f6':'#ef4444';
+  ctx.beginPath();ctx.roundRect(W/2-sndW/2,sndY,sndW,sndH,8*SC);ctx.fill();ctx.stroke();
+  ctx.fillStyle=soundEnabled?'#60a5fa':'#f87171';ctx.font=`${14*SC}px system-ui`;
+  ctx.fillText(soundEnabled?'🔊 Sound ON':'🔇 Sound OFF',W/2,sndY+sndH/2+5*SC);
   // Controls hint
   ctx.fillStyle='rgba(255,255,255,0.25)';ctx.font=`${10*SC}px system-ui`;
-  ctx.fillText('WASD/Arrows to move • Auto-aim active • ESC to pause',W/2,H*0.85);
+  ctx.fillText('WASD/Arrows • Auto-aim • M toggles sound • ESC pause',W/2,H*0.88);
 }
 function drawPause(){
   ctx.fillStyle='rgba(0,0,0,0.72)';ctx.fillRect(0,0,W,H);
@@ -391,15 +402,17 @@ canvas.addEventListener('touchstart',e=>{e.preventDefault();ACinit();const t=e.c
   if(state==='menu'){
     const by=H*0.54,bw=180*SC,bh=52*SC;
     const lbY=H*0.7,lbW=160*SC,lbH=40*SC;
+    const sndY=H*0.78,sndW=160*SC,sndH=40*SC;
     if(t.clientX>=W/2-bw/2&&t.clientX<=W/2+bw/2&&t.clientY>=by&&t.clientY<=by+bh){state='play';init();return;}
     if(t.clientX>=W/2-lbW/2&&t.clientX<=W/2+lbW/2&&t.clientY>=lbY&&t.clientY<=lbY+lbH){lbLoading=true;fetchLeaderboard().then(()=>lbLoading=false);state='leaderboard';return;}
+    if(t.clientX>=W/2-sndW/2&&t.clientX<=W/2+sndW/2&&t.clientY>=sndY&&t.clientY<=sndY+sndH){toggleSound();return;}
     return;
   }
   if(state==='paused'){
     const bw=Math.min(220*SC,W-60*SC),bh=60*SC,gap=14*SC,startY=H*0.43,startX=W/2-bw/2;
     const y=t.clientY-startY;
     if(y>=0&&y<bh){paused=false;state='play';return;}
-    if(y>=bh+gap&&y<bh+gap+bh){soundEnabled=!soundEnabled;return;}
+    if(y>=bh+gap&&y<bh+gap+bh){toggleSound();return;}
     if(y>=2*(bh+gap)&&y<2*(bh+gap)+bh){state='menu';paused=false;return;}
     return;
   }
@@ -427,15 +440,17 @@ canvas.addEventListener('mousedown',e=>{ACinit();const pbSz=22*SC,pbX=W-pbSz-12*
   if(state==='menu'){
     const by=H*0.54,bw=180*SC,bh=52*SC;
     const lbY=H*0.7,lbW=160*SC,lbH=40*SC;
+    const sndY=H*0.78,sndW=160*SC,sndH=40*SC;
     if(e.clientX>=W/2-bw/2&&e.clientX<=W/2+bw/2&&e.clientY>=by&&e.clientY<=by+bh){state='play';init();return;}
     if(e.clientX>=W/2-lbW/2&&e.clientX<=W/2+lbW/2&&e.clientY>=lbY&&e.clientY<=lbY+lbH){lbLoading=true;fetchLeaderboard().then(()=>lbLoading=false);state='leaderboard';return;}
+    if(e.clientX>=W/2-sndW/2&&e.clientX<=W/2+sndW/2&&e.clientY>=sndY&&e.clientY<=sndY+sndH){toggleSound();return;}
     return;
   }
   if(state==='paused'){
     const bw=Math.min(220*SC,W-60*SC),bh=60*SC,gap=14*SC,startY=H*0.43,startX=W/2-bw/2;
     const y=e.clientY-startY;
     if(y>=0&&y<bh){paused=false;state='play';return;}
-    if(y>=bh+gap&&y<bh+gap+bh){soundEnabled=!soundEnabled;return;}
+    if(y>=bh+gap&&y<bh+gap+bh){toggleSound();return;}
     if(y>=2*(bh+gap)&&y<2*(bh+gap)+bh){state='menu';paused=false;return;}
     return;
   }
@@ -469,7 +484,7 @@ document.addEventListener('keydown',e=>{
   if(e.code==='Escape'&&state==='leaderboard'){state='menu';return;}
   if(e.code==='Space'||e.code==='Enter'){ACinit();if(state==='menu'){state='play';init();}else if(state==='gameover'){lbLoading=true;fetchLeaderboard().then(()=>lbLoading=false);state='leaderboard';}}
   if(e.code==='Escape'&&(state==='play'||state==='paused')){paused=!paused;state=paused?'paused':'play';}
-  if(e.code==='KeyM'){soundEnabled=!soundEnabled;}
+  if(e.code==='KeyM'){toggleSound();}
   if(state==='levelup'&&e.key>='1'&&e.key<='3'){selectLevelUp(parseInt(e.key)-1);}
 });
 const keys={};document.addEventListener('keydown',e=>{keys[e.code]=true;});document.addEventListener('keyup',e=>{keys[e.code]=false;});
