@@ -247,15 +247,27 @@ function update() {
   frame++; gameTime++;
   
   // Move
+  let isMoving = false;
   if (touch.on && (Math.abs(touch.dx) > 4 || Math.abs(touch.dy) > 4)) {
     const len = Math.hypot(touch.dx, touch.dy);
     player.x += (touch.dx/len)*player.spd;
     player.y += (touch.dy/len)*player.spd;
     player.angle = Math.atan2(touch.dy, touch.dx);
+    isMoving = true;
   }
   player.x = Math.max(player.sz, Math.min(W-player.sz, player.x));
   player.y = Math.max(player.sz, Math.min(H-player.sz, player.y));
   if (player.inv > 0) player.inv--;
+  
+  // Auto-aim at nearest enemy when not moving
+  if (!isMoving && enemies.length > 0) {
+    let nearest = null, nd = Infinity;
+    enemies.forEach(e => {
+      const d = Math.hypot(e.x-player.x, e.y-player.y);
+      if (d < nd) { nd = d; nearest = e; }
+    });
+    if (nearest) player.angle = Math.atan2(nearest.y-player.y, nearest.x-player.x);
+  }
   
   shoot(); upWeap();
   
@@ -342,13 +354,46 @@ function addW() {
 
 // === DRAW ===
 function drawBG() {
-  ctx.fillStyle = '#0a0a12';
+  // Dark gradient sky
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, '#0a0510');
+  grad.addColorStop(0.5, '#0f0a1a');
+  grad.addColorStop(1, '#1a0f25');
+  ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
-  ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+  
+  // Ground plane (bottom half)
+  const groundGrad = ctx.createLinearGradient(0, H*0.55, 0, H);
+  groundGrad.addColorStop(0, 'rgba(20,10,30,0)');
+  groundGrad.addColorStop(0.3, 'rgba(15,10,25,0.7)');
+  groundGrad.addColorStop(1, 'rgba(10,5,18,1)');
+  ctx.fillStyle = groundGrad;
+  ctx.fillRect(0, H*0.55, W, H*0.45);
+  
+  // Atmospheric fog/vignette
+  const vignette = ctx.createRadialGradient(W/2, H/2, H*0.2, W/2, H/2, H*0.85);
+  vignette.addColorStop(0, 'rgba(0,0,0,0)');
+  vignette.addColorStop(1, 'rgba(0,0,0,0.55)');
+  ctx.fillStyle = vignette;
+  ctx.fillRect(0, 0, W, H);
+  
+  // Ambient floating particles (dust/magic in air)
+  ctx.fillStyle = 'rgba(150,100,255,0.08)';
+  for (let i = 0; i < 30; i++) {
+    const seed = i * 73 + 11;
+    const ax = ((seed * 17) % W);
+    const ay = ((seed * 31 + frame * 0.3) % (H * 0.7));
+    const ar = ((i % 4) + 1) * scale * 1.5;
+    ctx.beginPath();
+    ctx.arc(ax, ay, ar, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  
+  // Subtle ground texture lines
+  ctx.strokeStyle = 'rgba(100,60,150,0.06)';
   ctx.lineWidth = 1;
-  const g = 50*scale, ox = (frame*.4)%g, oy = (frame*.25)%g;
-  for (let x=-g+ox; x<W+g; x+=g) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
-  for (let y=-g+oy; y<H+g; y+=g) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+  const g = 60*scale, ox = (frame*.3)%g, oy = (frame*.2)%g;
+  for (let x=-g+ox; x<W+g; x+=g) { ctx.beginPath(); ctx.moveTo(x, H*0.5); ctx.lineTo(x+20*scale, H); ctx.stroke(); }
 }
 
 function drawPlayer() {
