@@ -138,7 +138,7 @@ function resetGame() {
   obstacles = [];
   particles = [];
   frame = 0;
-  gameSpeed = 6 * scale;
+  gameSpeed = 5 * scale;
   dist = 0;
   score = 0;
 }
@@ -471,8 +471,12 @@ function update() {
   dist += gameSpeed;
   score = Math.floor(dist / 10);
   
-  // Increase speed over time
-  gameSpeed = (6 + dist / 2000) * scale;
+  // Cap max speed
+  const maxSpeed = 12 * scale;
+  if (gameSpeed > maxSpeed) gameSpeed = maxSpeed;
+  
+  // Increase speed over time (slower ramp)
+  gameSpeed = (4 + dist / 5000) * scale;
   
   // Bear physics
   bear.vy += bear.gravity;
@@ -490,8 +494,8 @@ function update() {
     bear.isJumping = false;
   }
   
-  // Spawn obstacles
-  if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < W - 200 * scale - Math.random() * 150 * scale) {
+  // Spawn obstacles (wider spacing for fair gameplay)
+  if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < W - 280 * scale - Math.random() * 100 * scale) {
     obstacles.push(createObstacle(W + 50));
   }
   
