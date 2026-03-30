@@ -259,9 +259,9 @@ function drawBG(){
   // Notch / Dynamic Island guard bars
   ctx.fillStyle='rgba(10,5,16,0.97)';
   ctx.fillRect(0,0,W,safeTop);
-  // Game area: below notch guard, above home guard
-  // HUD renders ABOVE game area (in safe zone)
-  const GAME_TOP=safeTop+10*SC;
+  // Game area: bounded by HUD top (safeTop) and Wave/Timer bottom
+  // HUD occupies safeTop to ~safeTop+90*SC, game field starts below that
+  const GAME_TOP=safeTop+90*SC;
   const GAME_BOTTOM=H-safeBottom-10*SC;
   // Store for use in movement/spawn
   window.__GAME_TOP=GAME_TOP;
