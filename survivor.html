@@ -39,7 +39,12 @@ function resize(){
   canvas.style.height=H+'px';
   ctx.setTransform(dpr,0,0,dpr,0,0);
   SC=Math.min(W/400,H/700);
+  // Safe area helpers for PWA notch / home indicator
+  const css=window.getComputedStyle(document.documentElement);
+  safeTop=parseFloat(css.getPropertyValue('--sat'))||parseFloat(css.getPropertyValue('padding-top'))||Math.max(44,H*0.05);
+  safeBottom=parseFloat(css.getPropertyValue('--sab'))||Math.max(34,H*0.03);
 }
+let safeTop=44,safeBottom=34;
 resize();
 window.addEventListener('resize',resize);
 if(window.visualViewport){
@@ -247,7 +252,15 @@ function showLevelUpMenu(){
   levelUpOptions=levelUpOptions.slice(0,3);selectedOption=-1;
 }
 function selectLevelUp(idx){if(idx<0||idx>=levelUpOptions.length)return;const opt=levelUpOptions[idx];if(opt.type==='upgrade'){opt.weapon.lvl++;}else if(opt.type==='new'){weapons.push({...WDEF[opt.key],lvl:1,cdT:0,spinT:0,spinA:0,orbitT:0,orbitA:0});}state='play';}
-function drawBG(){const sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,COLORS.BG);sky.addColorStop(0.45,'#12081b');sky.addColorStop(1,COLORS.BG2);ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);const spacing=60*SC,px=player?player.x:W/2,py=player?player.y:H/2,offX=(-px*0.2)%spacing,offY=(-py*0.2)%spacing;ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1;for(let x=offX-spacing;x<W+spacing;x+=spacing){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}for(let y=offY-spacing;y<H+spacing;y+=spacing){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}bgDust.forEach(d=>{ctx.globalAlpha=d.a;ctx.fillStyle='rgba(255,255,255,0.9)';ctx.beginPath();ctx.arc(d.x,d.y,d.sz,0,Math.PI*2);ctx.fill();});ctx.globalAlpha=1;const fog=ctx.createLinearGradient(0,H*0.78,0,H);fog.addColorStop(0,'rgba(10,5,16,0)');fog.addColorStop(1,'rgba(10,5,16,0.75)');ctx.fillStyle=fog;ctx.fillRect(0,H*0.78+Math.sin(frame*0.01)*6*SC,W,H*0.3);}
+function drawBG(){
+  // Notch guard: solid bar at top to prevent notch/Dynamic Island from hiding game content
+  // Use a fixed tall bar that covers the notch area in PWA standalone mode
+  // Notch / Dynamic Island guard bars
+  ctx.fillStyle='rgba(10,5,16,0.97)';
+  ctx.fillRect(0,0,W,safeTop);
+  ctx.fillRect(0,H-safeBottom,W,safeBottom);
+
+  const sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,COLORS.BG);sky.addColorStop(0.45,'#12081b');sky.addColorStop(1,COLORS.BG2);ctx.fillStyle=sky;ctx.fillRect(0,safeTop,W,H-safeTop-safeBottom);const spacing=60*SC,px=player?player.x:W/2,py=player?player.y:H/2,offX=(-px*0.2)%spacing,offY=(-py*0.2)%spacing;ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1;for(let x=offX-spacing;x<W+spacing;x+=spacing){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}for(let y=offY-spacing;y<H+spacing;y+=spacing){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}bgDust.forEach(d=>{ctx.globalAlpha=d.a;ctx.fillStyle='rgba(255,255,255,0.9)';ctx.beginPath();ctx.arc(d.x,d.y,d.sz,0,Math.PI*2);ctx.fill();});ctx.globalAlpha=1;const fog=ctx.createLinearGradient(0,H*0.78,0,H-safeBottom);fog.addColorStop(0,'rgba(10,5,16,0)');fog.addColorStop(1,'rgba(10,5,16,0.75)');ctx.fillStyle=fog;ctx.fillRect(0,H*0.78+Math.sin(frame*0.01)*6*SC,W,H*0.3);}
 function drawPlayer(){
   const{x,y,sz,inv,angle}=player;
   const pulse=inv>0?(0.35+0.65*Math.abs(Math.sin(frame*0.5))):1;
@@ -458,7 +471,7 @@ function drawPause(){
   ctx.fillStyle='rgba(255,255,255,0.3)';ctx.font=`${12*SC}px system-ui`;
   ctx.fillText('ESC also resumes',W/2,H*0.88);
 }
-function drawGO(){ctx.fillStyle='rgba(0,0,0,0.76)';ctx.fillRect(0,0,W,H);const cy=H*0.24;ctx.textAlign='center';ctx.fillStyle=COLORS.HP_LOW;ctx.font=`bold ${42*SC}px system-ui`;ctx.fillText('💀 Game Over',W/2,cy);ctx.fillStyle='#fff';ctx.font=`${28*SC}px system-ui`;ctx.fillText(score+' pts',W/2,cy+52*SC);ctx.fillStyle='rgba(255,255,255,0.8)';ctx.font=`${16*SC}px system-ui`;ctx.fillText('☠ Kills: '+kills,W/2,cy+100*SC);ctx.fillText('⏱ Time: '+(gameTime/60|0)+'m '+(gameTime%60)+'s',W/2,cy+128*SC);ctx.fillText('🌊 Wave: '+wave+'   ⭐ Level: '+level,W/2,cy+156*SC);ctx.fillStyle=COLORS.HP_HIGH;ctx.font=`${18*SC}px system-ui`;ctx.fillText('Best: '+getHS(),W/2,cy+194*SC);ctx.fillStyle='rgba(255,255,255,0.6)';ctx.font=`${17*SC}px system-ui`;ctx.fillText('Tap to Retry',W/2,cy+244*SC);}
+function drawGO(){ctx.fillStyle='rgba(0,0,0,0.82)';ctx.fillRect(0,0,W,H);const cy=Math.max(H*0.24,safeTop+50*SC);ctx.textAlign='center';ctx.fillStyle=COLORS.HP_LOW;ctx.font=`bold ${42*SC}px system-ui`;ctx.fillText('💀 Game Over',W/2,cy);ctx.fillStyle='#fff';ctx.font=`${28*SC}px system-ui`;ctx.fillText(score+' pts',W/2,cy+52*SC);ctx.fillStyle='rgba(255,255,255,0.8)';ctx.font=`${16*SC}px system-ui`;ctx.fillText('☠ Kills: '+kills,W/2,cy+100*SC);ctx.fillText('⏱ Time: '+(gameTime/60|0)+'m '+(gameTime%60)+'s',W/2,cy+128*SC);ctx.fillText('🌊 Wave: '+wave+'   ⭐ Level: '+level,W/2,cy+156*SC);ctx.fillStyle=COLORS.HP_HIGH;ctx.font=`${18*SC}px system-ui`;ctx.fillText('Best: '+getHS(),W/2,cy+194*SC);ctx.fillStyle='rgba(255,255,255,0.6)';ctx.font=`${17*SC}px system-ui`;ctx.fillText('Tap to Retry',W/2,cy+244*SC);}
 function drawLevelUp(){ctx.fillStyle='rgba(0,0,0,0.8)';ctx.fillRect(0,0,W,H);ctx.textAlign='center';ctx.fillStyle=COLORS.GOLD;ctx.font=`bold ${34*SC}px system-ui`;ctx.fillText('⬆️ LEVEL UP!',W/2,H*0.22);ctx.font=`${16*SC}px system-ui`;ctx.fillStyle='rgba(255,255,255,0.5)';ctx.fillText('Wähle eine Option',W/2,H*0.31);const bw=Math.min(280*SC,W-40*SC),bh=76*SC,startY=H*0.38,startX=W/2-bw/2;levelUpOptions.forEach((opt,i)=>{const y=startY+i*(bh+12*SC),emoji=WEAPON_ICONS[opt.key]||'✨',lvl=opt.type==='upgrade'?'Lv.'+(opt.weapon.lvl+1):'Lv.1';ctx.fillStyle='rgba(0,0,0,0.45)';ctx.strokeStyle=opt.col;ctx.lineWidth=2*SC;ctx.shadowColor=opt.col;ctx.shadowBlur=10*SC;ctx.beginPath();ctx.roundRect(startX,y,bw,bh,12*SC);ctx.fill();ctx.stroke();ctx.shadowBlur=0;ctx.textAlign='left';ctx.fillStyle=opt.col;ctx.font=`bold ${22*SC}px system-ui`;ctx.fillText(emoji,startX+14*SC,y+44*SC);ctx.fillStyle='#fff';ctx.font=`bold ${16*SC}px system-ui`;ctx.fillText((i+1)+'. '+WDEF[opt.key].name,startX+48*SC,y+32*SC);ctx.fillStyle='rgba(255,255,255,0.7)';ctx.font=`${13*SC}px system-ui`;ctx.fillText(opt.type==='new'?'Neue Waffe':'Upgrade',startX+48*SC,y+54*SC);ctx.textAlign='right';ctx.fillStyle=COLORS.GOLD;ctx.fillText(lvl,startX+bw-16*SC,y+44*SC);ctx.textAlign='center';});ctx.fillStyle='rgba(255,255,255,0.3)';ctx.font=`${12*SC}px system-ui`;ctx.fillText('Tap to select',W/2,H*0.88);}
 function render(){ctx.save();if(shakeT>0)ctx.translate(shakeX,shakeY);drawBG();if(state==='menu'){player={x:W/2,y:H/2,sz:22*SC,hp:100,maxHp:100,spd:3.8*SC,inv:0,angle:0};enemies.forEach(drawEnemy);orbs.forEach(drawOrb);drawPlayer();drawMenu();}else if(state==='play'||state==='gameover'){if(paused){drawPause();ctx.restore();return;}orbs.forEach(drawOrb);enemies.forEach(drawEnemy);if(boss)drawBoss();projs.forEach(drawProj);drawPlayer();drawParts();drawDmgNums();drawUI();if(state==='gameover')drawGO();}else if(state==='paused'){orbs.forEach(drawOrb);enemies.forEach(drawEnemy);if(boss)drawBoss();projs.forEach(drawProj);drawPlayer();drawParts();drawDmgNums();drawUI();drawPause();}else if(state==='nickinput'){drawNickInput();showNickInput();}else{hideNickInput();if(state==='leaderboard')drawLeaderboard();else if(state==='levelup'){orbs.forEach(drawOrb);enemies.forEach(drawEnemy);if(boss)drawBoss();projs.forEach(drawProj);drawPlayer();drawParts();drawDmgNums();drawUI();drawLevelUp();}}ctx.restore();if(eliteFlash>0){ctx.save();const flash=eliteFlash>=4?(8-eliteFlash)/4:eliteFlash/4;ctx.globalAlpha=Math.min(0.3,flash*0.3);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);ctx.restore();eliteFlash--;}}
 canvas.addEventListener('touchstart',e=>{e.preventDefault();ACinit();const t=e.changedTouches[0];
