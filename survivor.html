@@ -343,8 +343,9 @@ function drawUI(){
   ctx.save();ctx.shadowBlur=6*SC;ctx.shadowColor=COLORS.GOLD;ctx.fillStyle=COLORS.GOLD;ctx.beginPath();ctx.roundRect(xpBarX,xpBarY,xpBarW*xpRatio,xpBarH,3*SC);ctx.fill();ctx.restore();
   ctx.font=`${9*SC}px system-ui`;ctx.fillStyle='rgba(255,255,255,0.7)';ctx.fillText(xp+'/'+xpNeed,W/2,xpBarY+xpBarH-1*SC);
 
-  // Row 3: Wave + Timer (centered, below XP bar)
-  ctx.font=`${11*SC}px system-ui`;ctx.fillStyle='rgba(255,255,255,0.5)';ctx.fillText('Wave '+wave+' • '+(gameTime/60|0)+'m '+(gameTime%60)+'s',W/2,xpBarY+xpBarH+14*SC);
+  // Row 3: Elapsed time (MM:SS, small, below XP bar)
+  const mins=String(gameTime/60|0).padStart(2,'0'),secs=String(gameTime%60).padStart(2,'0');
+  ctx.font=`${10*SC}px system-ui`;ctx.fillStyle='rgba(255,255,255,0.35)';ctx.fillText(mins+':'+secs,W/2,xpBarY+xpBarH+14*SC);
 
   // Boss banner renders below wave/timer row
   drawBossBanner();
