@@ -119,7 +119,7 @@ function init(){
   enemies=[];projs=[];orbs=[];parts=[];
   wave=0;score=0;frame=0;gameTime=0;
   level=1;xp=0;xpNeed=10;kills=0;deathPops=[];
-  weapons=[{...WDEF.magic,lvl:1,cdT:0,spinT:0,spinA:0,orbitT:0,orbitA:0}];
+  weapons=[{...WDEF.magic,lvl:1,cdT:0,spinT:0,spinA:0,orbitT:0,orbitA:0,wKey:'magic'}];
   bossActive=false;boss=null;shakeT=0;dmgNums=[];
   bossSpawnedThisWave=false;eliteSpawnedThisWave=false;
   hitStop=0;eliteFlash=0;bossBarHp=0;bossBarAlpha=0;bossBarMeta=null;combo=0;comboTimer=0;levelUpCooldown=0;
@@ -299,7 +299,7 @@ function selectLevelUp(idx){
   if(levelUpCooldown>0)return;
   const opt=levelUpOptions[idx];
   if(opt.type==='upgrade'){opt.weapon.lvl++;}
-  else if(opt.type==='new'){weapons.push({...WDEF[opt.key],lvl:1,cdT:0,spinT:0,spinA:0,orbitT:0,orbitA:0});}
+  else if(opt.type==='new'){weapons.push({...WDEF[opt.key],lvl:1,cdT:0,spinT:0,spinA:0,orbitT:0,orbitA:0,wKey:opt.key});}
   state='play';
 }
 function drawBG(){
@@ -453,8 +453,8 @@ function drawUI(){
   if(bossIntro){const bi=bossIntro;ctx.save();const fl=Math.min(1,bi.t/20);ctx.globalAlpha=fl;ctx.textAlign='center';ctx.fillStyle=bi.col;ctx.shadowColor=bi.col;ctx.shadowBlur=20*SC;ctx.font=`bold ${26*SC}px system-ui`;ctx.fillText(bi.name+' INCOMING!',W/2,H*0.42);ctx.restore();bi.t--;if(bi.t<=0)bossIntro=null;}
   if(bossWarn){const bw=bossWarn;ctx.save();const fl=Math.min(1,bw.t/30);const pulse=0.7+Math.sin(frame*0.3)*0.3;ctx.globalAlpha=fl*0.85*pulse;ctx.textAlign='center';ctx.fillStyle='#ef4444';ctx.shadowColor='#ef4444';ctx.shadowBlur=15*SC;ctx.font=`bold ${20*SC}px system-ui`;ctx.fillText('⚠ WAVE '+wave+' — BOSS INCOMING ⚠',W/2,H*0.52);ctx.restore();bw.t--;if(bw.t<=0)bossWarn=null;}
 
-  // Weapon slots (bottom left) with icons
-  const iy=H-40*SC;weapons.forEach((w,i)=>{const k=Object.keys(WDEF).find(k=>WDEF[k].kind===w.kind),col=WDEF[k]?WDEF[k].col:w.col,ix=18*SC+i*40*SC,icon=WEAPON_ICONS[k]||'✨';ctx.fillStyle='rgba(0,0,0,0.4)';ctx.beginPath();ctx.arc(ix,iy,15*SC,0,Math.PI*2);ctx.fill();ctx.strokeStyle=col;ctx.lineWidth=2*SC;ctx.stroke();ctx.fillStyle=col;ctx.beginPath();ctx.arc(ix,iy,10*SC,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.font=`${11*SC}px system-ui`;ctx.textAlign='center';ctx.fillText(icon,ix,iy+4*SC);const cdRatio=Math.max(0,1-w.cdT/w.cd);ctx.fillStyle='rgba(0,0,0,0.55)';ctx.fillRect(ix-8*SC,iy+12*SC,16*SC,4*SC);ctx.fillStyle=col;ctx.fillRect(ix-8*SC,iy+12*SC,16*SC*cdRatio,4*SC);if(w.lvl>1){ctx.fillStyle=COLORS.GOLD;ctx.font=`bold ${9*SC}px system-ui`;ctx.fillText(w.lvl,ix,iy+3*SC);}ctx.textAlign='left';});
+  // Weapon slots (bottom left) - each weapon shows its own icon
+  const iy=H-40*SC;weapons.forEach((w,i)=>{const k=w.wKey||Object.keys(WDEF).find(k=>WDEF[k].kind===w.kind)||'',col=WDEF[k]?.col||w.col||'#fff',ix=18*SC+i*42*SC,icon=WEAPON_ICONS[k]||'✨';ctx.fillStyle='rgba(0,0,0,0.45)';ctx.beginPath();ctx.arc(ix,iy,16*SC,0,Math.PI*2);ctx.fill();ctx.strokeStyle=col;ctx.lineWidth=2*SC;ctx.stroke();ctx.shadowColor=col;ctx.shadowBlur=6*SC;ctx.fillStyle=col;ctx.beginPath();ctx.arc(ix,iy,11*SC,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#fff';ctx.font=`${12*SC}px system-ui`;ctx.textAlign='center';ctx.fillText(icon,ix,iy+4*SC);const cdRatio=Math.max(0,1-w.cdT/w.cd);ctx.fillStyle='rgba(0,0,0,0.6)';ctx.fillRect(ix-9*SC,iy+14*SC,18*SC,4*SC);ctx.fillStyle=col;ctx.fillRect(ix-9*SC,iy+14*SC,18*SC*cdRatio,4*SC);if(w.lvl>1){ctx.fillStyle=COLORS.GOLD;ctx.font=`bold ${8*SC}px system-ui`;ctx.fillText(w.lvl,ix,iy+4*SC);}ctx.textAlign='left';});
   // Buff indicators: stacked below weapon slots
   const buffX=W-52*SC,barW=42*SC,barH=5*SC;
   if(buffs.speed){const spdp=buffs.speed.t/180;const by=H-78*SC;ctx.fillStyle='#3b82f6';ctx.font=`bold ${9*SC}px system-ui`;ctx.fillText('⚡ SPD',buffX,by);ctx.fillStyle='rgba(59,130,246,0.3)';ctx.fillRect(buffX,by+3*SC,barW,barH);ctx.fillStyle='#3b82f6';ctx.fillRect(buffX,by+3*SC,barW*spdp,barH);}
