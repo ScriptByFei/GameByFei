@@ -120,6 +120,8 @@ function init(){
   wave=0;score=0;frame=0;gameTime=0;
   level=1;xp=0;xpNeed=10;kills=0;deathPops=[];
   weapons=[{...WDEF.magic,lvl:1,cdT:0,spinT:0,spinA:0,orbitT:0,orbitA:0,wKey:'magic'}];
+  // Repair any weapons missing wKey (from older save versions)
+  weapons.forEach(w=>{if(!w.wKey){const k=Object.keys(WDEF).find(k=>WDEF[k].kind===w.kind);w.wKey=k||'magic';}});
   bossActive=false;boss=null;shakeT=0;dmgNums=[];
   bossSpawnedThisWave=false;eliteSpawnedThisWave=false;
   hitStop=0;eliteFlash=0;bossBarHp=0;bossBarAlpha=0;bossBarMeta=null;combo=0;comboTimer=0;levelUpCooldown=0;
@@ -282,13 +284,13 @@ function update(){
 }
 function showLevelUpMenu(){
   state='levelup';levelUpOptions=[];levelUpCooldown=45;
-  const have=weapons.map(w=>Object.keys(WDEF).find(k=>WDEF[k].kind===w.kind));
+  const have=weapons.map(w=>w.wKey);
   const pool=Object.keys(WDEF).filter(k=>!have.includes(k));
   const wToLvl=weapons[Math.floor(Math.random()*weapons.length)];
-  const wKey=Object.keys(WDEF).find(k=>WDEF[k].kind===wToLvl.kind);
+  const wKey=wToLvl.wKey;
   levelUpOptions.push({type:'upgrade',weapon:wToLvl,key:wKey,label:WDEF[wKey].name+' Lv+1',col:WDEF[wKey].col});
   if(pool.length>0){const newKey=pool[Math.floor(Math.random()*pool.length)];levelUpOptions.push({type:'new',key:newKey,label:WDEF[newKey].name+' (neu!)',col:WDEF[newKey].col});}
-  if(weapons.length>1){const other=weapons.find(w=>w!==wToLvl);if(other){const ok=Object.keys(WDEF).find(k=>WDEF[k].kind===other.kind);levelUpOptions.push({type:'upgrade',weapon:other,key:ok,label:WDEF[ok].name+' Lv+1',col:WDEF[ok].col});}}
+  if(weapons.length>1){const other=weapons.find(w=>w!==wToLvl);if(other){const ok=other.wKey;levelUpOptions.push({type:'upgrade',weapon:other,key:ok,label:WDEF[ok].name+' Lv+1',col:WDEF[ok].col});}}
   else if(pool.length>1){const newKey2=pool.filter(k=>k!==levelUpOptions[1]?.key)[0];if(newKey2)levelUpOptions.push({type:'new',key:newKey2,label:WDEF[newKey2].name+' (neu!)',col:WDEF[newKey2].col});}
   // Deduplicate by key - never show the same weapon twice
   const seen=new Set();levelUpOptions=levelUpOptions.filter(o=>{if(seen.has(o.key))return false;seen.add(o.key);return true;});
