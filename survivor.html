@@ -456,8 +456,10 @@ function drawUI(){
 
   // Weapon slots (bottom left) with icons
   const iy=H-40*SC;weapons.forEach((w,i)=>{const k=Object.keys(WDEF).find(k=>WDEF[k].kind===w.kind),col=WDEF[k]?WDEF[k].col:w.col,ix=18*SC+i*40*SC,icon=WEAPON_ICONS[k]||'✨';ctx.fillStyle='rgba(0,0,0,0.4)';ctx.beginPath();ctx.arc(ix,iy,15*SC,0,Math.PI*2);ctx.fill();ctx.strokeStyle=col;ctx.lineWidth=2*SC;ctx.stroke();ctx.fillStyle=col;ctx.beginPath();ctx.arc(ix,iy,10*SC,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.font=`${11*SC}px system-ui`;ctx.textAlign='center';ctx.fillText(icon,ix,iy+4*SC);const cdRatio=Math.max(0,1-w.cdT/w.cd);ctx.fillStyle='rgba(0,0,0,0.55)';ctx.fillRect(ix-8*SC,iy+12*SC,16*SC,4*SC);ctx.fillStyle=col;ctx.fillRect(ix-8*SC,iy+12*SC,16*SC*cdRatio,4*SC);if(w.lvl>1){ctx.fillStyle=COLORS.GOLD;ctx.font=`bold ${9*SC}px system-ui`;ctx.fillText(w.lvl,ix,iy+3*SC);}ctx.textAlign='left';});
-  if(buffs.speed){const spdp=buffs.speed.t/180;ctx.fillStyle='#3b82f6';ctx.font=`bold ${11*SC}px system-ui`;ctx.fillText('SPD',W-70*SC,H-55*SC);ctx.fillStyle='rgba(59,130,246,0.35)';ctx.fillRect(W-70*SC,H-44*SC,44*SC,5*SC);ctx.fillStyle='#3b82f6';ctx.fillRect(W-70*SC,H-44*SC,44*SC*spdp,5*SC);}
-  if(buffs.dmg){const dmgp=buffs.dmg.t/180;ctx.fillStyle='#ef4444';ctx.font=`bold ${11*SC}px system-ui`;ctx.fillText('DMG',W-70*SC,H-38*SC);ctx.fillStyle='rgba(239,68,68,0.35)';ctx.fillRect(W-70*SC,H-27*SC,44*SC,5*SC);ctx.fillStyle='#ef4444';ctx.fillRect(W-70*SC,H-27*SC,44*SC*dmgp,5*SC);}
+  // Buff indicators: stacked below weapon slots
+  const buffX=W-52*SC,barW=42*SC,barH=5*SC;
+  if(buffs.speed){const spdp=buffs.speed.t/180;const by=H-78*SC;ctx.fillStyle='#3b82f6';ctx.font=`bold ${9*SC}px system-ui`;ctx.fillText('⚡ SPD',buffX,by);ctx.fillStyle='rgba(59,130,246,0.3)';ctx.fillRect(buffX,by+3*SC,barW,barH);ctx.fillStyle='#3b82f6';ctx.fillRect(buffX,by+3*SC,barW*spdp,barH);}
+  if(buffs.dmg){const dmgp=buffs.dmg.t/180;const by=H-62*SC;ctx.fillStyle='#ef4444';ctx.font=`bold ${9*SC}px system-ui`;ctx.fillText('💥 DMG',buffX,by);ctx.fillStyle='rgba(239,68,68,0.3)';ctx.fillRect(buffX,by+3*SC,barW,barH);ctx.fillStyle='#ef4444';ctx.fillRect(buffX,by+3*SC,barW*dmgp,barH);}
 
   // Player invincibility shield ring
   if(player.inv>0){const pulse=1+Math.sin(frame*0.35)*0.08;ctx.strokeStyle='rgba(255,255,255,0.2)';ctx.lineWidth=2*SC;ctx.beginPath();ctx.arc(player.x,player.y,player.sz*1.35*pulse,0,Math.PI*2);ctx.stroke();}
