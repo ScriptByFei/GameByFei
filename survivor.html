@@ -268,6 +268,7 @@ function update(){
   deathPops.forEach(p=>p.life-=1/60);deathPops=deathPops.filter(p=>p.life>0);
   // Velocity decay + dust trail
   player.vx*=0.85;player.vy*=0.85;
+  if(player.inv>0)player.inv--;
   if(player.dmgFlash>0)player.dmgFlash--;
   const pspd=Math.hypot(player.vx,player.vy);
   if(pspd>0.4&&frame%5===0)spawnPart(player.x-player.vx*1.5,player.y-player.vy*1.5,'#a78bfa',2,pspd*0.25);
