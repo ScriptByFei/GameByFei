@@ -241,8 +241,10 @@ function upWeap(){
 }
 function update(){
   menuDust.forEach(d=>{d.x=(d.x+d.vx+W)%W;d.y=(d.y+d.vy+H)%H;});
-  if(state!=='play')return;
-  frame++;gameTime++;if(comboTimer>0){comboTimer--;}else{combo=0;}if(levelUpCooldown>0)levelUpCooldown--;
+  if(state!=='play'&&state!=='levelup')return;
+  if(levelUpCooldown>0)levelUpCooldown--;
+  if(state==='levelup')return;
+  frame++;gameTime++;if(comboTimer>0){comboTimer--;}else{combo=0;}
   if(shakeT>0){shakeT--;shakeX=(Math.random()-0.5)*shakeT*0.5;shakeY=(Math.random()-0.5)*shakeT*0.5;}else{shakeX=0;shakeY=0;}
   if(boss){bossBarMeta={name:boss.name,col:boss.col,maxHp:boss.maxHp,hp:boss.hp};bossBarHp+=(boss.hp-bossBarHp)*0.18;bossBarAlpha=Math.min(1,bossBarAlpha+0.08);}
   else if(bossBarMeta){bossBarHp+=(bossBarMeta.hp-bossBarHp)*0.25;bossBarAlpha=Math.max(0,bossBarAlpha-1/30);if(bossBarAlpha<=0.01){bossBarAlpha=0;bossBarMeta=null;}}
@@ -582,7 +584,7 @@ canvas.addEventListener('touchstart',e=>{e.preventDefault();ACinit();const t=e.c
   }
   if(state==='leaderboard'){
     const btnY=H*0.88,bw=140*SC,bh=44*SC;
-    if(t.clientX>=W/2-bw/2&&t.clientX<=W/2+bw/2&&t.clientY>=btnY&&t.clientY<=btnY+bh){state='menu';return;}
+    if(t.clientX>=W/2-bw/2&&t.clientX<=W/2+bw/2&&t.clientY>=btnY&&t.clientY<=btnY+bh){state='menu';menuLeaderboardLoaded=false;return;}
     return;
   }
   if(t.clientX>=pbX&&t.clientX<=pbX+pbSz&&t.clientY>=pbY&&t.clientY<=pbY+pbSz){if(state==='play'){paused=true;state='paused';return;}if(state==='paused'){paused=false;state='play';return;}}
@@ -637,7 +639,7 @@ document.addEventListener('keydown',e=>{
     if(e.code==='Enter'&&nickInput.length>0){submitScore(nickInput,score);state='leaderboard';lbLoading=true;fetchLeaderboard().then(()=>lbLoading=false);hideNickInput();}
     return;
   }
-  if(e.code==='Escape'&&state==='leaderboard'){state='menu';return;}
+  if(e.code==='Escape'&&state==='leaderboard'){state='menu';menuLeaderboardLoaded=false;return;}
   if(e.code==='Space'||e.code==='Enter'){ACinit();if(state==='menu'){state='play';init();}else if(state==='gameover'){lbLoading=true;fetchLeaderboard().then(()=>lbLoading=false);state='leaderboard';}}
   if(e.code==='Escape'&&(state==='play'||state==='paused')){paused=!paused;state=paused?'paused':'play';}
   if(e.code==='KeyM'){soundEnabled=!soundEnabled;}
