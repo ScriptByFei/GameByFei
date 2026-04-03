@@ -748,7 +748,6 @@ function drawMenu(){
   });ctx.globalAlpha=1;
 
   // Top section: Title with glow
-  ctx.textAlign='right';ctx.fillStyle='#facc15';ctx.font=`bold ${14*SC}px system-ui`;ctx.fillText('BANK 💰 '+bankGold,W-16*SC,safeTop+26*SC);ctx.textAlign='center';
   const titleY=H*0.12;
   ctx.save();
   ctx.shadowColor='#f472b6';ctx.shadowBlur=30*SC;
@@ -763,11 +762,20 @@ function drawMenu(){
   ctx.fillStyle='rgba(255,255,255,0.35)';ctx.font=`${11*SC}px system-ui`;
   ctx.fillText('Survive the horde • Collect weapons • Become overpowered',W/2,H*0.2);
 
-  const upBtnY=H*0.86,upBtnW=180*SC,upBtnH=42*SC;
-  ctx.fillStyle='rgba(255,255,255,0.08)';ctx.strokeStyle='rgba(255,255,255,0.18)';ctx.lineWidth=1.5*SC;ctx.beginPath();ctx.roundRect(W/2-upBtnW/2,upBtnY,upBtnW,upBtnH,12*SC);ctx.fill();ctx.stroke();ctx.fillStyle='#fff';ctx.font=`bold ${14*SC}px system-ui`;ctx.fillText('UPGRADES',W/2,upBtnY+27*SC);
+  // Hub economy block
+  const hubCardW=Math.min(240*SC,W-60*SC),hubCardH=84*SC,hubCardX=W/2-hubCardW/2,hubCardY=H*0.26;
+  ctx.fillStyle='rgba(255,255,255,0.06)';ctx.beginPath();ctx.roundRect(hubCardX,hubCardY,hubCardW,hubCardH,16*SC);ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,0.14)';ctx.lineWidth=1.2*SC;ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font=`${12*SC}px system-ui`;ctx.fillText('BANK',W/2,hubCardY+24*SC);
+  ctx.fillStyle='#facc15';ctx.font=`bold ${28*SC}px system-ui`;ctx.fillText('💰 '+bankGold,W/2,hubCardY+56*SC);
+
+  // Main action buttons
+  const actionY=hubCardY+hubCardH+16*SC,btnW=Math.min(220*SC,W-70*SC),btnH=48*SC,playY=actionY,upBtnY=actionY+btnH+12*SC,upBtnW=btnW,upBtnH=btnH;
+  ctx.fillStyle='rgba(34,197,94,0.18)';ctx.strokeStyle='#22c55e';ctx.lineWidth=2*SC;ctx.beginPath();ctx.roundRect(W/2-btnW/2,playY,btnW,btnH,12*SC);ctx.fill();ctx.stroke();ctx.fillStyle='#22c55e';ctx.font=`bold ${18*SC}px system-ui`;ctx.fillText('PLAY',W/2,playY+31*SC);
+  ctx.fillStyle='rgba(255,255,255,0.08)';ctx.strokeStyle='rgba(255,255,255,0.18)';ctx.lineWidth=1.5*SC;ctx.beginPath();ctx.roundRect(W/2-upBtnW/2,upBtnY,upBtnW,upBtnH,12*SC);ctx.fill();ctx.stroke();ctx.fillStyle='#fff';ctx.font=`bold ${14*SC}px system-ui`;ctx.fillText('UPGRADES',W/2,upBtnY+30*SC);
 
   // ===== LEADERBOARD SECTION (glassmorphism card) =====
-  const cardX=20*SC,cardW=W-cardX*2,cardY=H*0.24,cardH=130*SC;
+  const cardX=20*SC,cardW=W-cardX*2,cardY=upBtnY+upBtnH+20*SC,cardH=130*SC;
   // Card background with blur effect (simulated with multiple layers)
   ctx.fillStyle='rgba(255,255,255,0.06)';ctx.beginPath();ctx.roundRect(cardX,cardY,cardW,cardH,16*SC);ctx.fill();
   ctx.strokeStyle='rgba(255,255,255,0.12)';ctx.lineWidth=1*SC;ctx.stroke();
@@ -878,9 +886,11 @@ function render(){ctx.save();if(shakeT>0)ctx.translate(shakeX,shakeY);drawBG();i
 canvas.addEventListener('touchstart',e=>{e.preventDefault();ACinit();const t=e.changedTouches[0];
   const pbSz=22*SC,pbX=W-pbSz-16*SC,pbY=safeTop+18*SC;
   if(state==='menu'){
-    const by=H*0.52,bw=200*SC,bh=60*SC;
-    const lbY=H*0.68,lbW=180*SC,lbH=44*SC;
-    const upY=H*0.86,upW=180*SC,upH=42*SC;
+    const hubCardY=H*0.26,hubCardH=84*SC;
+    const btnW=Math.min(220*SC,W-70*SC),btnH=48*SC;
+    const by=hubCardY+hubCardH+16*SC,bw=btnW,bh=btnH;
+    const upY=by+bh+12*SC,upW=btnW,upH=btnH;
+    const lbY=upY+upH+20*SC,lbW=180*SC,lbH=44*SC;
     const sx=W-60*SC,sy=safeTop+14*SC,ssz=28*SC;
     if(t.clientX>=sx&&t.clientX<=sx+ssz&&t.clientY>=sy&&t.clientY<=sy+ssz){soundEnabled=!soundEnabled;return;}
     if(t.clientX>=W/2-bw/2&&t.clientX<=W/2+bw/2&&t.clientY>=by&&t.clientY<=by+bh){state='weaponselect';return;}
@@ -933,9 +943,11 @@ canvas.addEventListener('touchmove',e=>{e.preventDefault();if(joystick.active){c
 canvas.addEventListener('touchend',e=>{e.preventDefault();if(joystick.active){joystick.active=false;joystick.dx=0;joystick.dy=0;}touch.on=false;touch.dx=0;touch.dy=0;lastAimAngle=player.angle;},{passive:false});
 canvas.addEventListener('mousedown',e=>{ACinit();const pbSz=22*SC,pbX=W-pbSz-16*SC,pbY=safeTop+18*SC;
   if(state==='menu'){
-    const by=H*0.54,bw=180*SC,bh=52*SC;
-    const lbY=H*0.7,lbW=160*SC,lbH=40*SC;
-    const upY=H*0.86,upW=180*SC,upH=42*SC;
+    const hubCardY=H*0.26,hubCardH=84*SC;
+    const btnW=Math.min(220*SC,W-70*SC),btnH=48*SC;
+    const by=hubCardY+hubCardH+16*SC,bw=btnW,bh=btnH;
+    const upY=by+bh+12*SC,upW=btnW,upH=btnH;
+    const lbY=upY+upH+20*SC,lbW=180*SC,lbH=44*SC;
     if(e.clientX>=W/2-bw/2&&e.clientX<=W/2+bw/2&&e.clientY>=by&&e.clientY<=by+bh){state='weaponselect';return;}
     if(e.clientX>=W/2-lbW/2&&e.clientX<=W/2+lbW/2&&e.clientY>=lbY&&e.clientY<=lbY+lbH){lbLoading=true;fetchLeaderboard().then(()=>lbLoading=false);state='leaderboard';return;}
     if(e.clientX>=W/2-upW/2&&e.clientX<=W/2+upW/2&&e.clientY>=upY&&e.clientY<=upY+upH){state='upgrades';return;}
