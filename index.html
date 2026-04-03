@@ -748,7 +748,7 @@ function drawMenu(){
   });ctx.globalAlpha=1;
 
   // Top section: Title with glow
-  ctx.textAlign='right';ctx.fillStyle='#facc15';ctx.font=`bold ${14*SC}px system-ui`;ctx.fillText('BANK 💰 '+bankGold,W-16*SC,safeTop+26*SC);ctx.textAlign='center';
+  const bankText='BANK 💰 '+bankGold,bankPadX=12*SC,bankPadY=8*SC;ctx.font=`bold ${14*SC}px system-ui`;const bankW=Math.max(92*SC,ctx.measureText(bankText).width+bankPadX*2),bankH=30*SC,bankX=W-bankW-14*SC,bankY=safeTop+10*SC;ctx.fillStyle='rgba(0,0,0,0.38)';ctx.beginPath();ctx.roundRect(bankX,bankY,bankW,bankH,10*SC);ctx.fill();ctx.strokeStyle='rgba(250,204,21,0.28)';ctx.lineWidth=1.2*SC;ctx.stroke();ctx.textAlign='center';ctx.fillStyle='#facc15';ctx.fillText(bankText,bankX+bankW/2,bankY+20*SC);
   const titleY=H*0.12;
   ctx.save();
   ctx.shadowColor='#f472b6';ctx.shadowBlur=30*SC;
