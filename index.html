@@ -836,14 +836,6 @@ function drawMenu(){
   ctx.fillStyle='#f472b6';ctx.font=`${14*SC}px system-ui`;
   ctx.fillText('🌐 Full Leaderboard',W/2,lbY+lbH/2+5*SC);
 
-  // ===== SOUND TOGGLE (small, top-right corner) =====
-  const sx=W-60*SC,sy=safeTop+14*SC,ssz=28*SC;
-  ctx.fillStyle=soundEnabled?'rgba(59,130,246,0.2)':'rgba(100,100,100,0.2)';
-  ctx.strokeStyle=soundEnabled?'#3b82f6':'rgba(150,150,150,0.5)';ctx.lineWidth=1.5*SC;
-  ctx.beginPath();ctx.roundRect(sx,sy,ssz,ssz,8*SC);ctx.fill();ctx.stroke();
-  ctx.fillStyle=soundEnabled?'#3b82f6':'rgba(150,150,150,0.7)';ctx.font=`${13*SC}px system-ui`;
-  ctx.fillText(soundEnabled?'🔊':'🔇',sx+ssz/2,sy+ssz/2+4*SC);
-
   // ===== CONTROLS HINT (bottom) =====
   ctx.fillStyle='rgba(255,255,255,0.2)';ctx.font=`${10*SC}px system-ui`;
   ctx.fillText('WASD/Arrows to move • Auto-aim • ESC to pause',W/2,H*0.92);
@@ -881,8 +873,6 @@ canvas.addEventListener('touchstart',e=>{e.preventDefault();ACinit();const t=e.c
     const by=H*0.52,bw=200*SC,bh=60*SC;
     const lbY=H*0.68,lbW=180*SC,lbH=44*SC;
     const upY=H*0.86,upW=180*SC,upH=42*SC;
-    const sx=W-60*SC,sy=safeTop+14*SC,ssz=28*SC;
-    if(t.clientX>=sx&&t.clientX<=sx+ssz&&t.clientY>=sy&&t.clientY<=sy+ssz){soundEnabled=!soundEnabled;return;}
     if(t.clientX>=W/2-bw/2&&t.clientX<=W/2+bw/2&&t.clientY>=by&&t.clientY<=by+bh){state='weaponselect';return;}
     if(t.clientX>=W/2-lbW/2&&t.clientX<=W/2+lbW/2&&t.clientY>=lbY&&t.clientY<=lbY+lbH){lbLoading=true;fetchLeaderboard().then(()=>lbLoading=false);state='leaderboard';return;}
     if(t.clientX>=W/2-upW/2&&t.clientX<=W/2+upW/2&&t.clientY>=upY&&t.clientY<=upY+upH){state='upgrades';return;}
