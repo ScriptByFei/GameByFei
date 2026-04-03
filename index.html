@@ -76,11 +76,11 @@ let hitStop=0,eliteFlash=0,bossBarHp=0,bossBarAlpha=0,bossBarMeta=null,combo=0,c
 let gold=0;
 const WEAPON_ICONS={magic:'🪨',arrow:'🏹',shield:'🛡️',nova:'💥',lightning:'⚡',};
 const WDEF={
-  magic:{col:'#a855f7',cd:50,dmg:15,spd:6,sz:9,cnt:1,kind:'ball',name:'Steinwurf'},
-  arrow:{col:'#22c55e',cd:40,dmg:12,spd:11,sz:5,cnt:1,kind:'ball',name:'Arrow'},
-  shield:{col:'#3b82f6',cd:90,dmg:5,spd:0,sz:13,cnt:1,kind:'orbit',name:'Shield'},
-  nova:{col:'#f97316',cd:130,dmg:30,spd:0,sz:0,cnt:1,kind:'nova',name:'Nova'},
-  lightning:{col:'#60a5fa',cd:55,dmg:18,spd:9,sz:8,cnt:1,kind:'chain',name:'Lightning',chain:3},
+  magic:{col:'#a855f7',cd:48,dmg:15,spd:6.4,sz:9,cnt:1,kind:'ball',name:'Steinwurf'},
+  arrow:{col:'#22c55e',cd:28,dmg:10,spd:13,sz:5,cnt:1,kind:'ball',name:'Arrow'},
+  shield:{col:'#3b82f6',cd:82,dmg:7,spd:0,sz:15,cnt:1,kind:'orbit',name:'Shield'},
+  nova:{col:'#f97316',cd:155,dmg:42,spd:0,sz:0,cnt:1,kind:'nova',name:'Nova'},
+  lightning:{col:'#60a5fa',cd:62,dmg:16,spd:9,sz:8,cnt:1,kind:'chain',name:'Lightning',chain:3},
 };
 const BOSSES=[
   {name:'Demon King',col:'#ef4444',hpMult:15,dmgMult:2,sc:50,spawnMinions:5},
@@ -222,12 +222,12 @@ function shoot(){
       const allEnemies=[...enemies];
       if(boss&&boss.hp>0)allEnemies.push(boss);
       let targets=[],best=null,bestD=Infinity;
-      allEnemies.forEach(e=>{const d=Math.hypot(e.x-player.x,e.y-player.y);if(d<bestD && d<200*SC){bestD=d;best=e;}});
+      allEnemies.forEach(e=>{const d=Math.hypot(e.x-player.x,e.y-player.y);if(d<bestD && d<170*SC){bestD=d;best=e;}});
       if(best){targets.push(best);const hit=new Set([best]);
         for(let c=1;c<chainCount;c++){
           let next=null,nextD=Infinity;
           allEnemies.forEach(e=>{if(hit.has(e))return;const d=Math.hypot(e.x-targets[targets.length-1].x,e.y-targets[targets.length-1].y);if(d<nextD){nextD=d;next=e;}});
-          if(next&&nextD<100*SC){targets.push(next);hit.add(next);}else break;
+          if(next&&nextD<85*SC){targets.push(next);hit.add(next);}else break;
         }
         const dmgChain=dmg*(1+(w.lvl-1)*0.3);
         targets.forEach((t,i)=>{if(t===boss)hitBoss(dmgChain,w.col,player.x,player.y,4,4);else hitEnemy(t,dmgChain,w.col,player.x,player.y,4,4);});
@@ -254,7 +254,7 @@ function upWeap(){
     }
     if(w.kind==='orbit'&&w.orbitT>0){
       w.orbitT--;w.orbitA+=0.06;const r=(65+w.lvl*10)*SC,sx=player.x+Math.cos(w.orbitA)*r,sy=player.y+Math.sin(w.orbitA)*r;
-      if(frame%7===0){enemies.forEach(e=>{if(Math.hypot(e.x-sx,e.y-sy)<e.sz+18*SC)hitEnemy(e,w.dmg*w.lvl,w.col,sx,sy,3,3);});if(boss&&Math.hypot(boss.x-sx,boss.y-sy)<boss.sz+18*SC)hitBoss(w.dmg*w.lvl,w.col,sx,sy,3,3);}
+      if(frame%6===0){enemies.forEach(e=>{if(Math.hypot(e.x-sx,e.y-sy)<e.sz+20*SC)hitEnemy(e,w.dmg*w.lvl,w.col,sx,sy,3,3);});if(boss&&Math.hypot(boss.x-sx,boss.y-sy)<boss.sz+20*SC)hitBoss(w.dmg*w.lvl,w.col,sx,sy,3,3);}
     }
   });
 }
