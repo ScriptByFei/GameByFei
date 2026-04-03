@@ -196,6 +196,11 @@ function mkEnemy(){
   const d=ETYPES[i];
   enemies.push(makeEnemyEntity(x,y,d,1,{hp:d.hp*(1+(wave-1)*0.2),maxHp:d.hp*(1+(wave-1)*0.2)}));
 }
+
+function spawnGold(x,y,amt){
+    orbs.push({x:x,y:y,v:amt,sz:8*SC,vx:(Math.random()-.5)*3,vy:(Math.random()-.5)*3,life:600,mag:true,isGold:true});
+}
+
 function spawnXP(x,y,v){orbs.push({x,y,v,sz:(4+v*2)*SC,vx:(Math.random()-.5)*3,vy:(Math.random()-.5)*3,life:300,mag:false,done:false});}
 function spawnPart(x,y,col,n,spd){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=(spd||3)+Math.random()*3;parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,sz:(2+Math.random()*3)*SC,col,life:1});}}
 function spawnDmgNum(x,y,dmg,col){const amt=Math.round(dmg),scale=Math.min(1.9,1+amt/45);const critCol=amt>=30?'#FFD700':col;dmgNums.push({x:x+(Math.random()-.5)*10*SC,y,dmg:amt,col:critCol,life:1,vy:(-2.8-amt*0.015)*SC,size:14*SC*scale,vx:(Math.random()-.5)*0.45*SC});}
@@ -288,7 +293,7 @@ function update(){
   // Projectile-enemy collision (squared distance, early exit)
   projs.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.life--;if(p.life<=0)return;const psz2=p.sz*p.sz;for(let i=0;i<enemies.length;i++){const e=enemies[i];if(e.hp<=0)continue;const dx=p.x-e.x,dy=p.y-e.y;if(dx*dx+dy*dy<(psz2+e.sz*e.sz)){hitEnemy(e,p.dmg,p.col,p.x,p.y);p.life=0;break;}}if(boss&&boss.hp>0&&p.life>0){const dx=p.x-boss.x,dy=p.y-boss.y;if(dx*dx+dy*dy<(psz2+boss.sz*boss.sz)){hitBoss(getDmg(p,p.dmg),p.col,p.x,p.y);p.life=0;}}});
   projs=projs.filter(p=>p.life>0&&p.x>-80&&p.x<W+80&&p.y>-80&&p.y<H+80);
-  enemies.forEach(e=>{if(e.hp<=0&&!e.dead){e.dead=true;kills++;score+=e.sc;spawnXP(e.x,e.y,e.xp);spawnPart(e.x,e.y,e.col,e.elite?15:8,e.elite?7:5);spawnPart(e.x,e.y,'#ffffff',12,6);createDeathPop(e.x,e.y,e.sz,e.col);if(e.elite){hitStop=Math.max(hitStop,4);eliteFlash=8;}if(Math.random()<0.12)spawnPowerup(e.x,e.y);combo++;comboTimer=90;const xpBonus=combo>=5?2:combo>=3?1.5:1;xp+=Math.floor(e.xp*xpBonus);if(combo>=3)spawnDmgNum(e.x,e.y-20,'+XP',COLORS.GOLD);}});
+  enemies.forEach(e=>{if(e.hp<=0&&!e.dead){e.dead=true;kills++;score+=e.sc;spawnXP(e.x,e.y,e.xp); if(Math.random()<0.3) spawnGold(e.x,e.y, 1+Math.floor(Math.random()*3));spawnPart(e.x,e.y,e.col,e.elite?15:8,e.elite?7:5);spawnPart(e.x,e.y,'#ffffff',12,6);createDeathPop(e.x,e.y,e.sz,e.col);if(e.elite){hitStop=Math.max(hitStop,4);eliteFlash=8;}if(Math.random()<0.12)spawnPowerup(e.x,e.y);combo++;comboTimer=90;const xpBonus=combo>=5?2:combo>=3?1.5:1;xp+=Math.floor(e.xp*xpBonus);if(combo>=3)spawnDmgNum(e.x,e.y-20,'+XP',COLORS.GOLD);}});
   enemies=enemies.filter(e=>!e.dead);
   orbs.forEach(o=>{const d=Math.hypot(o.x-player.x,o.y-player.y);if(d<130*SC)o.mag=true;if(o.mag&&d>1){o.x+=(player.x-o.x)/d*8;o.y+=(player.y-o.y)/d*8;}else{o.x+=o.vx;o.y+=o.vy;o.vx*=0.93;o.vy*=0.93;}o.life--;if(d<player.sz+o.sz&&!o.done){o.done=true;xp+=o.v;sfx.xp();if(xp>=xpNeed){xp-=xpNeed;level++;xpNeed=Math.floor(xpNeed*1.5);sfx.lvup();showLevelUpMenu();for(let i=0;i<18;i++){const a=(i/18)*Math.PI*2;parts.push({x:player.x+Math.cos(a)*30*SC,y:player.y+Math.sin(a)*30*SC,vx:Math.cos(a)*4,vy:Math.sin(a)*4,sz:6*SC,col:COLORS.GOLD,life:1});}}}});
   orbs=orbs.filter(o=>!o.done&&o.life>0);
