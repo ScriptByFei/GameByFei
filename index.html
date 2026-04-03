@@ -78,7 +78,7 @@ const WEAPON_ICONS={magic:'🪨',arrow:'🏹',shield:'🛡️',nova:'💥',light
 const WDEF={
   magic:{col:'#a855f7',cd:48,dmg:15,spd:6.4,sz:9,cnt:1,kind:'ball',name:'Steinwurf'},
   arrow:{col:'#22c55e',cd:28,dmg:10,spd:13,sz:5,cnt:1,kind:'ball',name:'Arrow'},
-  shield:{col:'#3b82f6',cd:82,dmg:7,spd:0,sz:15,cnt:1,kind:'orbit',name:'Shield'},
+  shield:{col:'#3b82f6',cd:0,dmg:7,spd:0,sz:15,cnt:1,kind:'orbit',name:'Shield'},
   nova:{col:'#f97316',cd:155,dmg:42,spd:0,sz:0,cnt:1,kind:'nova',name:'Nova'},
   lightning:{col:'#60a5fa',cd:62,dmg:16,spd:9,sz:8,cnt:1,kind:'chain',name:'Lightning',chain:3},
 };
@@ -209,7 +209,7 @@ function shoot(){
       }
       sfx.shoot();
     }else if(w.kind==='spin'){w.cdT=w.cd;w.spinT=28;w.spinA=0;sfx.shoot();}
-    else if(w.kind==='orbit'){w.cdT=w.cd;w.orbitT=80;w.orbitA=0;sfx.shoot();}
+    else if(w.kind==='orbit'){w.orbitT=999999;w.orbitA=(w.orbitA||0);}
     else if(w.kind==='nova'){
       w.cdT=w.cd;
       const rng=(w.sz||100)*SC+w.lvl*20*SC;
@@ -252,9 +252,9 @@ function upWeap(){
       w.spinT--;w.spinA+=0.28;const r=(85+w.lvl*15)*SC,sx=player.x+Math.cos(w.spinA)*r,sy=player.y+Math.sin(w.spinA)*r;
       if(frame%3===0){enemies.forEach(e=>{if(Math.hypot(e.x-sx,e.y-sy)<e.sz+22*SC)hitEnemy(e,w.dmg*w.lvl,w.col,sx,sy,3,3);});if(boss&&Math.hypot(boss.x-sx,boss.y-sy)<boss.sz+22*SC)hitBoss(w.dmg*w.lvl,w.col,sx,sy,3,3);}
     }
-    if(w.kind==='orbit'&&w.orbitT>0){
-      w.orbitT--;w.orbitA+=0.06;const r=(65+w.lvl*10)*SC,sx=player.x+Math.cos(w.orbitA)*r,sy=player.y+Math.sin(w.orbitA)*r;
-      if(frame%6===0){enemies.forEach(e=>{if(Math.hypot(e.x-sx,e.y-sy)<e.sz+20*SC)hitEnemy(e,w.dmg*w.lvl,w.col,sx,sy,3,3);});if(boss&&Math.hypot(boss.x-sx,boss.y-sy)<boss.sz+20*SC)hitBoss(w.dmg*w.lvl,w.col,sx,sy,3,3);}
+    if(w.kind==='orbit'){
+      w.orbitA=(w.orbitA||0)+0.075;const r=(68+w.lvl*10)*SC,sx=player.x+Math.cos(w.orbitA)*r,sy=player.y+Math.sin(w.orbitA)*r;
+      if(frame%5===0){enemies.forEach(e=>{if(Math.hypot(e.x-sx,e.y-sy)<e.sz+22*SC)hitEnemy(e,w.dmg*w.lvl,w.col,sx,sy,3,3);});if(boss&&Math.hypot(boss.x-sx,boss.y-sy)<boss.sz+22*SC)hitBoss(w.dmg*w.lvl,w.col,sx,sy,3,3);}
     }
   });
 }
