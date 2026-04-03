@@ -763,7 +763,7 @@ function drawMenu(){
   ctx.fillStyle='rgba(255,255,255,0.35)';ctx.font=`${11*SC}px system-ui`;
   ctx.fillText('Survive the horde • Collect weapons • Become overpowered',W/2,H*0.2);
 
-  const upBtnY=H*0.86,upBtnW=180*SC,upBtnH=42*SC;
+  const upBtnY=H*0.81,upBtnW=180*SC,upBtnH=42*SC;
   ctx.fillStyle='rgba(255,255,255,0.08)';ctx.strokeStyle='rgba(255,255,255,0.18)';ctx.lineWidth=1.5*SC;ctx.beginPath();ctx.roundRect(W/2-upBtnW/2,upBtnY,upBtnW,upBtnH,12*SC);ctx.fill();ctx.stroke();ctx.fillStyle='#fff';ctx.font=`bold ${14*SC}px system-ui`;ctx.fillText('UPGRADES',W/2,upBtnY+27*SC);
 
   // ===== LEADERBOARD SECTION (glassmorphism card) =====
@@ -872,7 +872,7 @@ canvas.addEventListener('touchstart',e=>{e.preventDefault();ACinit();const t=e.c
   if(state==='menu'){
     const by=H*0.52,bw=200*SC,bh=60*SC;
     const lbY=H*0.68,lbW=180*SC,lbH=44*SC;
-    const upY=H*0.86,upW=180*SC,upH=42*SC;
+    const upY=H*0.81,upW=180*SC,upH=42*SC;
     if(t.clientX>=W/2-bw/2&&t.clientX<=W/2+bw/2&&t.clientY>=by&&t.clientY<=by+bh){state='weaponselect';return;}
     if(t.clientX>=W/2-lbW/2&&t.clientX<=W/2+lbW/2&&t.clientY>=lbY&&t.clientY<=lbY+lbH){lbLoading=true;fetchLeaderboard().then(()=>lbLoading=false);state='leaderboard';return;}
     if(t.clientX>=W/2-upW/2&&t.clientX<=W/2+upW/2&&t.clientY>=upY&&t.clientY<=upY+upH){state='upgrades';return;}
@@ -925,7 +925,7 @@ canvas.addEventListener('mousedown',e=>{ACinit();const pbSz=22*SC,pbX=W-pbSz-16*
   if(state==='menu'){
     const by=H*0.54,bw=180*SC,bh=52*SC;
     const lbY=H*0.7,lbW=160*SC,lbH=40*SC;
-    const upY=H*0.86,upW=180*SC,upH=42*SC;
+    const upY=H*0.81,upW=180*SC,upH=42*SC;
     if(e.clientX>=W/2-bw/2&&e.clientX<=W/2+bw/2&&e.clientY>=by&&e.clientY<=by+bh){state='weaponselect';return;}
     if(e.clientX>=W/2-lbW/2&&e.clientX<=W/2+lbW/2&&e.clientY>=lbY&&e.clientY<=lbY+lbH){lbLoading=true;fetchLeaderboard().then(()=>lbLoading=false);state='leaderboard';return;}
     if(e.clientX>=W/2-upW/2&&e.clientX<=W/2+upW/2&&e.clientY>=upY&&e.clientY<=upY+upH){state='upgrades';return;}
