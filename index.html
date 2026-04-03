@@ -590,7 +590,7 @@ function drawUI(){
   // Row 3: Wave + Elapsed time (MM:SS, small, below XP bar)
   const mins=String(gameTime/60|0).padStart(2,'0'),secs=String(gameTime%60).padStart(2,'0');
   ctx.font=`${10*SC}px system-ui`;ctx.fillStyle='rgba(255,255,255,0.35)';ctx.fillText('W'+wave+'  '+mins+':'+secs,W/2,xpBarY+xpBarH+14*SC);
-  ctx.textAlign='right';ctx.fillStyle='#facc15';ctx.font=`bold ${12*SC}px system-ui`;ctx.fillText('💰 '+gold,W-16*SC,hbY+hbH+16*SC);
+  ctx.textAlign='right';ctx.fillStyle='#facc15';ctx.font=`bold ${12*SC}px system-ui`;ctx.fillText('💰 '+gold,W-16*SC,hbY+hbH+34*SC);
   ctx.textAlign='center';
 
   // Boss banner renders below wave/timer row
