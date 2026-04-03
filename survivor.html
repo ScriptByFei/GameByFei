@@ -62,7 +62,7 @@ const COLORS={BG:'#0a0510',BG2:'#150d22',ACCENT:'#f472b6',GOLD:'#FFD700',HP_HIGH
 function getHS(){return parseInt(localStorage.getItem('survivorbyfei_hs')||'0');}
 function setHS(v){localStorage.setItem('survivorbyfei_hs',v);}
 
-let state='menu',player,enemies,projs,orbs,parts,wave,score,frame,gameTime,level,xp,xpNeed,weapons,bossIntro=null,menuLeaderboardLoaded=false;
+let state='menu',selectedStartWeapon='magic',player,enemies,projs,orbs,parts,wave,score,frame,gameTime,level,xp,xpNeed,weapons,bossIntro=null,menuLeaderboardLoaded=false;
 let nickInput='',nickCursor=0,nickChars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-',leaderboard=[],lbLoading=false;
 const LB_BIN='69c969b22eb67b7abbe16728';
 const LB_KEY='$2a$10$laWxXpPLHZIJxaF8I2HcGe/9CXo/d.aWoppS7MQxkGv7STeAfgIVm';
@@ -119,7 +119,7 @@ function init(){
   enemies=[];projs=[];orbs=[];parts=[];pools=[];
   wave=0;score=0;frame=0;gameTime=0;
   level=1;xp=0;xpNeed=10;kills=0;deathPops=[];
-  weapons=[{...WDEF.magic,lvl:1,cdT:0,spinT:0,spinA:0,orbitT:0,orbitA:0,wKey:'magic'}];
+  weapons=[{...WDEF[selectedStartWeapon],lvl:1,cdT:0,spinT:0,spinA:0,orbitT:0,orbitA:0,wKey:selectedStartWeapon}];
   // Repair any weapons missing wKey (from older save versions)
   weapons.forEach(w=>{if(!w.wKey){const k=Object.keys(WDEF).find(k=>WDEF[k].kind===w.kind);w.wKey=k||'magic';}});
   bossActive=false;boss=null;shakeT=0;dmgNums=[];
@@ -697,6 +697,20 @@ function drawNickInput(){
   ctx.fillText('Skip',W/2,sy+bh/2+5*SC);
 }
 function drawJoystick(){if(!joystick.active)return;ctx.save();ctx.globalAlpha=0.25;ctx.fillStyle='#a78bfa';ctx.beginPath();ctx.arc(joystick.sx,joystick.sy,joystick.sz,0,Math.PI*2);ctx.fill();ctx.globalAlpha=0.55;ctx.fillStyle='#c4b5fd';ctx.beginPath();ctx.arc(joystick.sx+joystick.dx,joystick.sy+joystick.dy,joystick.sz*0.5,0,Math.PI*2);ctx.fill();ctx.restore();}
+function drawWeaponSelect(){
+  ctx.fillStyle='rgba(0,0,0,0.88)';ctx.fillRect(0,0,W,H);
+  ctx.textAlign='center';
+  ctx.fillStyle=COLORS.GOLD;ctx.font=`bold ${30*SC}px system-ui`;ctx.fillText('STARTWAFFE',W/2,H*0.16);
+  ctx.fillStyle='rgba(255,255,255,0.45)';ctx.font=`${13*SC}px system-ui`;ctx.fillText('Wähle deine Waffe für den Run',W/2,H*0.21);
+  const keys=Object.keys(WDEF),bw=Math.min(260*SC,W-44*SC),bh=56*SC,startX=W/2-bw/2,startY=H*0.28;
+  keys.forEach((k,i)=>{const y=startY+i*(bh+12*SC),active=selectedStartWeapon===k,col=WDEF[k].col,icon=WEAPON_ICONS[k]||'✨';ctx.fillStyle=active?'rgba(255,255,255,0.12)':'rgba(255,255,255,0.05)';ctx.strokeStyle=active?COLORS.GOLD:col;ctx.lineWidth=active?3*SC:2*SC;ctx.beginPath();ctx.roundRect(startX,y,bw,bh,12*SC);ctx.fill();ctx.stroke();ctx.textAlign='left';ctx.fillStyle=col;ctx.font=`bold ${22*SC}px system-ui`;ctx.fillText(icon,startX+16*SC,y+36*SC);ctx.fillStyle='#fff';ctx.font=`bold ${16*SC}px system-ui`;ctx.fillText(WDEF[k].name,startX+52*SC,y+24*SC);ctx.fillStyle='rgba(255,255,255,0.55)';ctx.font=`${11*SC}px system-ui`;ctx.fillText('DMG '+WDEF[k].dmg+'  •  CD '+WDEF[k].cd,startX+52*SC,y+42*SC);ctx.textAlign='center';});
+  const sy=startY+keys.length*(bh+12*SC)+10*SC,sbw=bw,sbh=58*SC;
+  ctx.fillStyle='rgba(34,197,94,0.18)';ctx.strokeStyle='#22c55e';ctx.lineWidth=2*SC;ctx.beginPath();ctx.roundRect(startX,sy,sbw,sbh,12*SC);ctx.fill();ctx.stroke();
+  ctx.fillStyle='#22c55e';ctx.font=`bold ${18*SC}px system-ui`;ctx.fillText('RUN STARTEN',W/2,sy+sbh/2+6*SC);
+  const by=sy+sbh+12*SC;
+  ctx.fillStyle='rgba(255,255,255,0.08)';ctx.strokeStyle='rgba(255,255,255,0.22)';ctx.lineWidth=1.5*SC;ctx.beginPath();ctx.roundRect(startX,by,sbw,48*SC,12*SC);ctx.fill();ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,0.65)';ctx.font=`${14*SC}px system-ui`;ctx.fillText('Zurück',W/2,by+30*SC);
+}
 function drawMenu(){
   if(!menuLeaderboardLoaded){menuLeaderboardLoaded=true;lbLoading=true;fetchLeaderboard().then(()=>lbLoading=false);}
   // Background: dark gradient base
@@ -842,7 +856,7 @@ function drawPause(){
 }
 function drawGO(){ctx.fillStyle='rgba(0,0,0,0.82)';ctx.fillRect(0,0,W,H);const cy=Math.max(H*0.24,safeTop+50*SC);ctx.textAlign='center';ctx.fillStyle=COLORS.HP_LOW;ctx.font=`bold ${42*SC}px system-ui`;ctx.fillText('💀 Game Over',W/2,cy);ctx.fillStyle='#fff';ctx.font=`${28*SC}px system-ui`;ctx.fillText(score+' pts',W/2,cy+52*SC);ctx.fillStyle='rgba(255,255,255,0.8)';ctx.font=`${16*SC}px system-ui`;ctx.fillText('☠ Kills: '+kills,W/2,cy+100*SC);ctx.fillText('⏱ Time: '+(gameTime/60|0)+'m '+(gameTime%60)+'s',W/2,cy+128*SC);ctx.fillText('🌊 Wave: '+wave+'   ⭐ Level: '+level,W/2,cy+156*SC);ctx.fillStyle=COLORS.HP_HIGH;ctx.font=`${18*SC}px system-ui`;ctx.fillText('Best: '+getHS(),W/2,cy+194*SC);ctx.fillStyle='rgba(255,255,255,0.6)';ctx.font=`${17*SC}px system-ui`;ctx.fillText('Tap to Retry',W/2,cy+244*SC);}
 function drawLevelUp(){ctx.fillStyle='rgba(0,0,0,0.8)';ctx.fillRect(0,0,W,H);ctx.textAlign='center';ctx.fillStyle=COLORS.GOLD;ctx.font=`bold ${34*SC}px system-ui`;ctx.fillText('⬆️ LEVEL UP!',W/2,H*0.22);ctx.font=`${16*SC}px system-ui`;ctx.fillStyle='rgba(255,255,255,0.5)';ctx.fillText('Wähle eine Option',W/2,H*0.31);const bw=Math.min(280*SC,W-40*SC),bh=90*SC,startY=H*0.36,startX=W/2-bw/2;levelUpOptions.forEach((opt,i)=>{const y=startY+i*(bh+12*SC),emoji=WEAPON_ICONS[opt.key]||'✨',lvl=opt.type==='upgrade'?'Lv.'+(opt.weapon.lvl+1):'Lv.1',wdef=WDEF[opt.key],curDmg=opt.type==='upgrade'?Math.round(wdef.dmg*opt.weapon.lvl):wdef.dmg,newDmg=opt.type==='upgrade'?Math.round(wdef.dmg*(opt.weapon.lvl+1)):wdef.dmg,curCD=wdef.cd,newCD=wdef.cd;ctx.fillStyle='rgba(0,0,0,0.45)';ctx.strokeStyle=opt.col;ctx.lineWidth=2*SC;ctx.shadowColor=opt.col;ctx.shadowBlur=10*SC;ctx.beginPath();ctx.roundRect(startX,y,bw,bh,12*SC);ctx.fill();ctx.stroke();ctx.shadowBlur=0;ctx.textAlign='left';ctx.fillStyle=opt.col;ctx.font=`bold ${22*SC}px system-ui`;ctx.fillText(emoji,startX+14*SC,y+40*SC);ctx.fillStyle='#fff';ctx.font=`bold ${16*SC}px system-ui`;ctx.fillText((i+1)+'. '+wdef.name,startX+48*SC,y+28*SC);ctx.fillStyle='rgba(255,255,255,0.7)';ctx.font=`${12*SC}px system-ui`;ctx.fillText(opt.type==='new'?'Neue Waffe':'Upgrade',startX+48*SC,y+46*SC);if(opt.type==='upgrade'){ctx.fillStyle=COLORS.GOLD;ctx.font=`bold ${11*SC}px system-ui`;ctx.fillText('DMG: '+curDmg+' → '+newDmg,startX+48*SC,y+62*SC);}ctx.textAlign='right';ctx.fillStyle=COLORS.GOLD;ctx.fillText(lvl,startX+bw-16*SC,y+40*SC);ctx.textAlign='center';});if(levelUpCooldown>0){const cx=W/2,barW=80*SC,barH=6*SC,barY=H*0.31+28*SC,ratio=levelUpCooldown/45;ctx.fillStyle='rgba(0,0,0,0.5)';ctx.beginPath();ctx.roundRect(cx-barW/2,barY,barW,barH,3*SC);ctx.fill();ctx.fillStyle='#a78bfa';ctx.beginPath();ctx.roundRect(cx-barW/2,barY,barW*ratio,barH,3*SC);ctx.fill();ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font=`${10*SC}px system-ui`;ctx.fillText((levelUpCooldown/60).toFixed(1)+'s',cx,barY+barH+12*SC);}ctx.fillStyle='rgba(255,255,255,0.3)';ctx.font=`${12*SC}px system-ui`;ctx.fillText(levelUpCooldown>0?'Bitte warten...':'Tap to select',W/2,H*0.92);}
-function render(){ctx.save();if(shakeT>0)ctx.translate(shakeX,shakeY);drawBG();if(state==='menu'){player={x:W/2,y:H/2,sz:22*SC,hp:100,maxHp:100,spd:3.8*SC,inv:0,angle:0};enemies.forEach(drawEnemy);orbs.forEach(drawOrb);drawPlayer();drawMenu();}else if(state==='play'||state==='gameover'){if(paused){drawPause();ctx.restore();return;}drawPools();orbs.forEach(drawOrb);enemies.forEach(drawEnemy);if(boss)drawBoss();projs.forEach(drawProj);drawPlayer();drawParts();drawLightningBolts();powerups.forEach(drawPowerups);drawDmgNums();drawUI();drawJoystick();if(state==='gameover')drawGO();}else if(state==='paused'){drawPools();orbs.forEach(drawOrb);enemies.forEach(drawEnemy);if(boss)drawBoss();projs.forEach(drawProj);drawPlayer();drawParts();drawLightningBolts();powerups.forEach(drawPowerups);drawDmgNums();drawUI();drawJoystick();drawPause();}else if(state==='nickinput'){drawNickInput();showNickInput();}else{hideNickInput();if(state==='leaderboard')drawLeaderboard();else if(state==='levelup'){drawPools();orbs.forEach(drawOrb);enemies.forEach(drawEnemy);if(boss)drawBoss();projs.forEach(drawProj);drawPlayer();drawParts();drawLightningBolts();powerups.forEach(drawPowerups);drawDmgNums();drawUI();drawJoystick();drawLevelUp();}}ctx.restore();if(eliteFlash>0){ctx.save();const flash=eliteFlash>=4?(8-eliteFlash)/4:eliteFlash/4;ctx.globalAlpha=Math.min(0.3,flash*0.3);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);ctx.restore();eliteFlash--;}}
+function render(){ctx.save();if(shakeT>0)ctx.translate(shakeX,shakeY);drawBG();if(state==='menu'){player={x:W/2,y:H/2,sz:22*SC,hp:100,maxHp:100,spd:3.8*SC,inv:0,angle:0};enemies.forEach(drawEnemy);orbs.forEach(drawOrb);drawPlayer();drawMenu();}else if(state==='weaponselect'){drawWeaponSelect();}else if(state==='play'||state==='gameover'){if(paused){drawPause();ctx.restore();return;}drawPools();orbs.forEach(drawOrb);enemies.forEach(drawEnemy);if(boss)drawBoss();projs.forEach(drawProj);drawPlayer();drawParts();drawLightningBolts();powerups.forEach(drawPowerups);drawDmgNums();drawUI();drawJoystick();if(state==='gameover')drawGO();}else if(state==='paused'){drawPools();orbs.forEach(drawOrb);enemies.forEach(drawEnemy);if(boss)drawBoss();projs.forEach(drawProj);drawPlayer();drawParts();drawLightningBolts();powerups.forEach(drawPowerups);drawDmgNums();drawUI();drawJoystick();drawPause();}else if(state==='nickinput'){drawNickInput();showNickInput();}else{hideNickInput();if(state==='leaderboard')drawLeaderboard();else if(state==='levelup'){drawPools();orbs.forEach(drawOrb);enemies.forEach(drawEnemy);if(boss)drawBoss();projs.forEach(drawProj);drawPlayer();drawParts();drawLightningBolts();powerups.forEach(drawPowerups);drawDmgNums();drawUI();drawJoystick();drawLevelUp();}}ctx.restore();if(eliteFlash>0){ctx.save();const flash=eliteFlash>=4?(8-eliteFlash)/4:eliteFlash/4;ctx.globalAlpha=Math.min(0.3,flash*0.3);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);ctx.restore();eliteFlash--;}}
 canvas.addEventListener('touchstart',e=>{e.preventDefault();ACinit();const t=e.changedTouches[0];
   const pbSz=22*SC,pbX=W-pbSz-16*SC,pbY=safeTop+18*SC;
   if(state==='menu'){
@@ -850,8 +864,16 @@ canvas.addEventListener('touchstart',e=>{e.preventDefault();ACinit();const t=e.c
     const lbY=H*0.68,lbW=180*SC,lbH=44*SC;
     const sx=W-60*SC,sy=safeTop+14*SC,ssz=28*SC;
     if(t.clientX>=sx&&t.clientX<=sx+ssz&&t.clientY>=sy&&t.clientY<=sy+ssz){soundEnabled=!soundEnabled;return;}
-    if(t.clientX>=W/2-bw/2&&t.clientX<=W/2+bw/2&&t.clientY>=by&&t.clientY<=by+bh){state='play';init();return;}
+    if(t.clientX>=W/2-bw/2&&t.clientX<=W/2+bw/2&&t.clientY>=by&&t.clientY<=by+bh){state='weaponselect';return;}
     if(t.clientX>=W/2-lbW/2&&t.clientX<=W/2+lbW/2&&t.clientY>=lbY&&t.clientY<=lbY+lbH){lbLoading=true;fetchLeaderboard().then(()=>lbLoading=false);state='leaderboard';return;}
+    return;
+  }
+  if(state==='weaponselect'){
+    const keys=Object.keys(WDEF),bw=Math.min(260*SC,W-44*SC),bh=56*SC,startX=W/2-bw/2,startY=H*0.28;
+    keys.forEach((k,i)=>{const y=startY+i*(bh+12*SC);if(t.clientX>=startX&&t.clientX<=startX+bw&&t.clientY>=y&&t.clientY<=y+bh)selectedStartWeapon=k;});
+    const sy=startY+keys.length*(bh+12*SC)+10*SC,sbh=58*SC,by=sy+sbh+12*SC;
+    if(t.clientX>=startX&&t.clientX<=startX+bw&&t.clientY>=sy&&t.clientY<=sy+sbh){state='play';init();return;}
+    if(t.clientX>=startX&&t.clientX<=startX+bw&&t.clientY>=by&&t.clientY<=by+48*SC){state='menu';return;}
     return;
   }
   if(state==='paused'){
@@ -887,8 +909,16 @@ canvas.addEventListener('mousedown',e=>{ACinit();const pbSz=22*SC,pbX=W-pbSz-16*
   if(state==='menu'){
     const by=H*0.54,bw=180*SC,bh=52*SC;
     const lbY=H*0.7,lbW=160*SC,lbH=40*SC;
-    if(e.clientX>=W/2-bw/2&&e.clientX<=W/2+bw/2&&e.clientY>=by&&e.clientY<=by+bh){state='play';init();return;}
+    if(e.clientX>=W/2-bw/2&&e.clientX<=W/2+bw/2&&e.clientY>=by&&e.clientY<=by+bh){state='weaponselect';return;}
     if(e.clientX>=W/2-lbW/2&&e.clientX<=W/2+lbW/2&&e.clientY>=lbY&&e.clientY<=lbY+lbH){lbLoading=true;fetchLeaderboard().then(()=>lbLoading=false);state='leaderboard';return;}
+    return;
+  }
+  if(state==='weaponselect'){
+    const keys=Object.keys(WDEF),bw=Math.min(260*SC,W-44*SC),bh=56*SC,startX=W/2-bw/2,startY=H*0.28;
+    keys.forEach((k,i)=>{const y=startY+i*(bh+12*SC);if(e.clientX>=startX&&e.clientX<=startX+bw&&e.clientY>=y&&e.clientY<=y+bh)selectedStartWeapon=k;});
+    const sy=startY+keys.length*(bh+12*SC)+10*SC,sbh=58*SC,by=sy+sbh+12*SC;
+    if(e.clientX>=startX&&e.clientX<=startX+bw&&e.clientY>=sy&&e.clientY<=sy+sbh){state='play';init();return;}
+    if(e.clientX>=startX&&e.clientX<=startX+bw&&e.clientY>=by&&e.clientY<=by+48*SC){state='menu';return;}
     return;
   }
   if(state==='paused'){
@@ -927,7 +957,9 @@ document.addEventListener('keydown',e=>{
     return;
   }
   if(e.code==='Escape'&&state==='leaderboard'){state='menu';menuLeaderboardLoaded=false;return;}
-  if(e.code==='Space'||e.code==='Enter'){ACinit();if(state==='menu'){state='play';init();}else if(state==='gameover'){lbLoading=true;fetchLeaderboard().then(()=>lbLoading=false);state='leaderboard';}}
+  if(e.code==='Escape'&&state==='weaponselect'){state='menu';return;}
+  if(state==='weaponselect'&&e.key>='1'&&e.key<='5'){selectedStartWeapon=Object.keys(WDEF)[parseInt(e.key)-1]||selectedStartWeapon;return;}
+  if(e.code==='Space'||e.code==='Enter'){ACinit();if(state==='menu'){state='weaponselect';}else if(state==='weaponselect'){state='play';init();}else if(state==='gameover'){lbLoading=true;fetchLeaderboard().then(()=>lbLoading=false);state='leaderboard';}}
   if(e.code==='Escape'&&(state==='play'||state==='paused')){paused=!paused;state=paused?'paused':'play';}
   if(e.code==='KeyM'){soundEnabled=!soundEnabled;}
   if(state==='levelup'&&e.key>='1'&&e.key<='3'){selectLevelUp(parseInt(e.key)-1);}
