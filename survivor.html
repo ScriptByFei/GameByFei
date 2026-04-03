@@ -894,34 +894,7 @@ function render(){
   if(state==='menu'){
     player={x:W/2,y:H/2,sz:22*SC,hp:100,maxHp:100,spd:3.8*SC,inv:0,angle:0};
     enemies.forEach(drawEnemy);orbs.forEach(drawOrb);drawPlayer();drawMenu();
-  } else if(state==='weaponselect'){
-    drawWeaponSelect();
-  } else if(state==='play'||state==='gameover'){
-    if(paused){drawPause();ctx.restore();return;}
-    drawPools();orbs.forEach(drawOrb);enemies.forEach(drawEnemy);if(boss)drawBoss();projs.forEach(drawProj);drawPlayer();drawParts();drawLightningBolts();powerups.forEach(drawPowerups);drawDmgNums();drawUI();drawJoystick();
-    if(state==='gameover')drawGO();
-  } else     if(state==='weaponselect'){
-        const keys = Object.keys(WDEF);
-        keys.forEach((k,i)=>{
-            const y = H*0.25 + i*(60*SC);
-            if(e.clientX>=W/2-100*SC && e.clientX<=W/2+100*SC && e.clientY>=y && e.clientY<=y+50*SC){
-                selectedWeapon=k;
-            }
-        });
-        if(e.clientY>H*0.8) { state='play'; init(); }
-        return;
-    }
-    if(state==='weaponselect'){
-        const keys = Object.keys(WDEF);
-        keys.forEach((k,i)=>{
-            const y = H*0.25 + i*(60*SC);
-            if(ev.clientX>=W/2-100*SC && ev.clientX<=W/2+100*SC && ev.clientY>=y && ev.clientY<=y+50*SC){
-                selectedWeapon=k;
-            }
-        });
-        if(ev.clientY>H*0.8) { state='play'; init(); }
-        return;
-    }
+  } else 
 if(state==='paused'){
     drawPools();orbs.forEach(drawOrb);enemies.forEach(drawEnemy);if(boss)drawBoss();projs.forEach(drawProj);drawPlayer();drawParts();drawLightningBolts();powerups.forEach(drawPowerups);drawDmgNums();drawUI();drawJoystick();drawPause();
   } else if(state==='upgrades'){
