@@ -871,7 +871,29 @@ function render(){
     if(paused){drawPause();ctx.restore();return;}
     drawPools();orbs.forEach(drawOrb);enemies.forEach(drawEnemy);if(boss)drawBoss();projs.forEach(drawProj);drawPlayer();drawParts();drawLightningBolts();powerups.forEach(drawPowerups);drawDmgNums();drawUI();drawJoystick();
     if(state==='gameover')drawGO();
-  } else if(state==='paused'){
+  } else     if(state==='weaponselect'){
+        const keys = Object.keys(WDEF);
+        keys.forEach((k,i)=>{
+            const y = H*0.25 + i*(60*SC);
+            if(e.clientX>=W/2-100*SC && e.clientX<=W/2+100*SC && e.clientY>=y && e.clientY<=y+50*SC){
+                selectedWeapon=k;
+            }
+        });
+        if(e.clientY>H*0.8) { state='play'; init(); }
+        return;
+    }
+    if(state==='weaponselect'){
+        const keys = Object.keys(WDEF);
+        keys.forEach((k,i)=>{
+            const y = H*0.25 + i*(60*SC);
+            if(ev.clientX>=W/2-100*SC && ev.clientX<=W/2+100*SC && ev.clientY>=y && ev.clientY<=y+50*SC){
+                selectedWeapon=k;
+            }
+        });
+        if(ev.clientY>H*0.8) { state='play'; init(); }
+        return;
+    }
+if(state==='paused'){
     drawPools();orbs.forEach(drawOrb);enemies.forEach(drawEnemy);if(boss)drawBoss();projs.forEach(drawProj);drawPlayer();drawParts();drawLightningBolts();powerups.forEach(drawPowerups);drawDmgNums();drawUI();drawJoystick();drawPause();
   } else if(state==='upgrades'){
     drawUpgrades();drawJoystick();
@@ -887,7 +909,7 @@ function render(){
   ctx.restore();
   if(eliteFlash>0){ctx.save();const flash=eliteFlash>=4?(8-eliteFlash)/4:eliteFlash/4;ctx.globalAlpha=Math.min(0.3,flash*0.3);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);ctx.restore();eliteFlash--;}
 }
-canvas.addEventListener('touchstart',e=>{e.preventDefault();ACinit();const t=e.changedTouches[0];
+canvas.addEventListener('touchstart',e=>{e.preventDefault();ACinit();const t=e.changedTouches[0];const ev=t;
   const pbSz=22*SC,pbX=W-pbSz-16*SC,pbY=safeTop+18*SC;
   if(state==='menu'){
     const by=H*0.52,bw=200*SC,bh=60*SC;
