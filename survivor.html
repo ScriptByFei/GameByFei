@@ -923,7 +923,7 @@ canvas.addEventListener('touchstart',e=>{e.preventDefault();ACinit();const t=e.c
     const lbY=H*0.68,lbW=180*SC,lbH=44*SC;
     const sx=W-60*SC,sy=safeTop+14*SC,ssz=28*SC;
     if(t.clientX>=sx&&t.clientX<=sx+ssz&&t.clientY>=sy&&t.clientY<=sy+ssz){soundEnabled=!soundEnabled;return;}
-    if(t.clientX>=W/2-bw/2&&t.clientX<=W/2+bw/2&&t.clientY>=by&&t.clientY<=by+bh){state='play';init();return;}
+    if(t.clientX>=W/2-bw/2&&t.clientX<=W/2+bw/2&&t.clientY>=by&&t.clientY<=by+bh){state='weaponselect';return;}
          const upY = by + bh + 16*SC;
          if(t.clientX>=W/2-bw/2&&t.clientX<=W/2+bw/2&&t.clientY>=upY&&t.clientY<=upY+bh){state='upgrades';return;}
     if(t.clientX>=W/2-lbW/2&&t.clientX<=W/2+lbW/2&&t.clientY>=lbY&&t.clientY<=lbY+lbH){lbLoading=true;fetchLeaderboard().then(()=>lbLoading=false);state='leaderboard';return;}
