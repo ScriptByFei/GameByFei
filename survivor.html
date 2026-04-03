@@ -717,13 +717,26 @@ function drawWeaponSelect(){
   ctx.fillStyle='rgba(255,255,255,0.65)';ctx.font=`${14*SC}px system-ui`;ctx.fillText('Zurück',W/2,by+30*SC);
 }
 function drawUpgrades(){
-  ctx.fillStyle='rgba(0,0,0,0.9)';ctx.fillRect(0,0,W,H);
-  ctx.textAlign='center';ctx.fillStyle=COLORS.GOLD;ctx.font=`bold ${30*SC}px system-ui`;ctx.fillText('UPGRADES',W/2,H*0.14);
-  ctx.fillStyle='#facc15';ctx.font=`bold ${16*SC}px system-ui`;ctx.fillText('BANK 💰 '+bankGold,W/2,H*0.19);
-  const keys=Object.keys(META_DEFS),bw=Math.min(290*SC,W-40*SC),bh=60*SC,startX=W/2-bw/2,startY=H*0.26;
-  keys.forEach((k,i)=>{const def=META_DEFS[k],lvl=metaSkills[k]||0,y=startY+i*(bh+12*SC),cost=def.cost*(lvl+1),maxed=lvl>=def.max;ctx.fillStyle='rgba(255,255,255,0.06)';ctx.strokeStyle=maxed?'#22c55e':bankGold>=cost?COLORS.GOLD:'rgba(255,255,255,0.18)';ctx.lineWidth=2*SC;ctx.beginPath();ctx.roundRect(startX,y,bw,bh,12*SC);ctx.fill();ctx.stroke();ctx.textAlign='left';ctx.fillStyle='#fff';ctx.font=`bold ${15*SC}px system-ui`;ctx.fillText(def.name+'  Lv.'+lvl+'/'+def.max,startX+14*SC,y+22*SC);ctx.fillStyle='rgba(255,255,255,0.55)';ctx.font=`${11*SC}px system-ui`;ctx.fillText(def.desc,startX+14*SC,y+42*SC);ctx.textAlign='right';ctx.fillStyle=maxed?'#22c55e':'#facc15';ctx.font=`bold ${13*SC}px system-ui`;ctx.fillText(maxed?'MAX':'💰 '+cost,startX+bw-14*SC,y+34*SC);ctx.textAlign='center';});
-  const by=startY+keys.length*(bh+12*SC)+12*SC;
-  ctx.fillStyle='rgba(255,255,255,0.08)';ctx.strokeStyle='rgba(255,255,255,0.22)';ctx.lineWidth=1.5*SC;ctx.beginPath();ctx.roundRect(startX,by,bw,48*SC,12*SC);ctx.fill();ctx.stroke();ctx.fillStyle='rgba(255,255,255,0.75)';ctx.font=`${14*SC}px system-ui`;ctx.fillText('Zurück',W/2,by+30*SC);
+  ctx.fillStyle='rgba(0,0,0,0.92)';ctx.fillRect(0,0,W,H);
+  ctx.textAlign='center';
+  ctx.fillStyle=COLORS.GOLD;ctx.font=`bold ${32*SC}px system-ui`;ctx.fillText('UPGRADES',W/2,H*0.13);
+  ctx.fillStyle='rgba(255,255,255,0.45)';ctx.font=`${12*SC}px system-ui`;ctx.fillText('Permanente Verbesserungen für jeden neuen Run',W/2,H*0.18);
+
+  const bankText='BANK 💰 '+bankGold;ctx.font=`bold ${16*SC}px system-ui`;const badgeW=Math.max(120*SC,ctx.measureText(bankText).width+28*SC),badgeH=34*SC,badgeX=W/2-badgeW/2,badgeY=H*0.205;
+  ctx.fillStyle='rgba(0,0,0,0.35)';ctx.beginPath();ctx.roundRect(badgeX,badgeY,badgeW,badgeH,12*SC);ctx.fill();ctx.strokeStyle='rgba(250,204,21,0.35)';ctx.lineWidth=1.4*SC;ctx.stroke();ctx.fillStyle='#facc15';ctx.fillText(bankText,W/2,badgeY+22*SC);
+
+  const keys=Object.keys(META_DEFS),bw=Math.min(300*SC,W-34*SC),bh=70*SC,startX=W/2-bw/2,startY=H*0.29;
+  keys.forEach((k,i)=>{const def=META_DEFS[k],lvl=metaSkills[k]||0,y=startY+i*(bh+12*SC),cost=def.cost*(lvl+1),maxed=lvl>=def.max,afford=bankGold>=cost;
+    ctx.fillStyle='rgba(255,255,255,0.06)';ctx.strokeStyle=maxed?'#22c55e':afford?COLORS.GOLD:'rgba(255,255,255,0.14)';ctx.lineWidth=maxed||afford?2*SC:1.5*SC;ctx.beginPath();ctx.roundRect(startX,y,bw,bh,14*SC);ctx.fill();ctx.stroke();
+    ctx.textAlign='left';ctx.fillStyle='#fff';ctx.font=`bold ${16*SC}px system-ui`;ctx.fillText(def.name,startX+16*SC,y+24*SC);
+    ctx.fillStyle='rgba(255,255,255,0.55)';ctx.font=`${11*SC}px system-ui`;ctx.fillText(def.desc,startX+16*SC,y+46*SC);
+    ctx.fillStyle='rgba(255,255,255,0.35)';ctx.font=`${10*SC}px system-ui`;ctx.fillText('Level',startX+16*SC,y+61*SC);
+    ctx.fillStyle='#c4b5fd';ctx.font=`bold ${12*SC}px system-ui`;ctx.fillText(lvl+' / '+def.max,startX+54*SC,y+61*SC);
+    ctx.textAlign='right';
+    if(maxed){ctx.fillStyle='#22c55e';ctx.font=`bold ${14*SC}px system-ui`;ctx.fillText('MAX',startX+bw-16*SC,y+40*SC);}else{ctx.fillStyle=afford?'#facc15':'rgba(255,255,255,0.35)';ctx.font=`bold ${14*SC}px system-ui`;ctx.fillText('💰 '+cost,startX+bw-16*SC,y+30*SC);ctx.fillStyle=afford?'rgba(34,197,94,0.85)':'rgba(255,255,255,0.3)';ctx.font=`${10*SC}px system-ui`;ctx.fillText(afford?'Kaufen':'Zu teuer',startX+bw-16*SC,y+50*SC);}ctx.textAlign='center';
+  });
+  const by=startY+keys.length*(bh+12*SC)+14*SC;
+  ctx.fillStyle='rgba(255,255,255,0.08)';ctx.strokeStyle='rgba(255,255,255,0.22)';ctx.lineWidth=1.5*SC;ctx.beginPath();ctx.roundRect(startX,by,bw,50*SC,12*SC);ctx.fill();ctx.stroke();ctx.fillStyle='rgba(255,255,255,0.8)';ctx.font=`bold ${14*SC}px system-ui`;ctx.fillText('Zurück',W/2,by+31*SC);
 }
 function drawMenu(){
   if(!menuLeaderboardLoaded){menuLeaderboardLoaded=true;lbLoading=true;fetchLeaderboard().then(()=>lbLoading=false);}
