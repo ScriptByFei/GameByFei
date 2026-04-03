@@ -575,7 +575,14 @@ function drawProj(p){
   }
 }
 function drawPools(){pools.forEach(p=>{ctx.globalAlpha=Math.min(0.4,p.life/30);ctx.fillStyle=p.col;ctx.beginPath();ctx.ellipse(p.x,p.y,p.sz,p.sz*0.6,0,0,Math.PI*2);ctx.fill();});ctx.globalAlpha=1;}
-function drawOrb(o){const pul=Math.sin(frame*0.1+o.x)*0.25+1;ctx.fillStyle='#22c55e';ctx.beginPath();ctx.arc(o.x,o.y,o.sz*pul,0,Math.PI*2);ctx.fill();ctx.fillStyle='#4ade80';ctx.beginPath();ctx.arc(o.x,o.y,o.sz*0.5*pul,0,Math.PI*2);ctx.fill();}
+function drawOrb(o){const pul=Math.sin(frame*0.1+o.x)*0.25+1;
+    if(o.isGold){
+        ctx.fillStyle='#FFD700';ctx.beginPath();ctx.arc(o.x,o.y,o.sz*pul,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(o.x,o.y,o.sz*0.3*pul,0,Math.PI*2);ctx.fill();
+    } else {
+        ctx.fillStyle='#22c55e';ctx.beginPath();ctx.arc(o.x,o.y,o.sz*pul,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='#4ade80';ctx.beginPath();ctx.arc(o.x,o.y,o.sz*0.5*pul,0,Math.PI*2);ctx.fill();
+    }}
 function drawParts(){parts.forEach(p=>{ctx.globalAlpha=Math.max(0,p.life);ctx.fillStyle=p.col;ctx.beginPath();ctx.arc(p.x,p.y,p.sz*Math.max(0.35,p.life),0,Math.PI*2);ctx.fill();});deathPops.forEach(p=>{const pr=1-p.life/p.maxLife;ctx.globalAlpha=(1-pr)*0.45;ctx.fillStyle=p.col;ctx.beginPath();ctx.arc(p.x,p.y,p.sz*(1+pr*0.35),0,Math.PI*2);ctx.fill();});ctx.globalAlpha=1;}
 function drawLightningBolts(){lightningBolts.forEach(b=>{ctx.save();ctx.globalAlpha=b.life*2;ctx.strokeStyle=b.col;ctx.lineWidth=3*SC;ctx.beginPath();ctx.moveTo(b.x1,b.y1);ctx.lineTo(b.mx||(b.x1+b.x2)/2,b.my||(b.y1+b.y2)/2);ctx.lineTo(b.x2,b.y2);ctx.stroke();ctx.restore();});}
 function drawPowerups(){
