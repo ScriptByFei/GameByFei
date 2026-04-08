@@ -768,6 +768,7 @@ canvas.addEventListener('touchstart',e=>{e.preventDefault();ACinit();const t=e.c
   const hudPadX=Math.max(UI.sidePad*SC,12*SC),hudTop=Math.max(safeTop+UI.topPad*SC,safeTop+10*SC);
   const pbSz=Math.max(44*SC,22*SC),pbX=W-hudPadX-pbSz,pbY=hudTop;
   if(state==='menu'){
+    ctx.textAlign='center';
     const titleY=Math.max(safeTop+72*SC,H*0.13),cardY=titleY+62*SC,cardH=126*SC,by=cardY+cardH+26*SC,bw=Math.min(220*SC,W-44*SC),bh=58*SC,lbY=by+bh+14*SC,lbW=bw,lbH=46*SC,upY=lbY+lbH+14*SC,upW=bw,upH=46*SC;
     if(isInRect(t.clientX,t.clientY,W/2-bw/2,by,bw,bh)){state='weaponselect';return;}
     if(isInRect(t.clientX,t.clientY,W/2-lbW/2,lbY,lbW,lbH)){lbLoading=true;fetchLeaderboard().then(()=>lbLoading=false);state='leaderboard';return;}
@@ -827,6 +828,7 @@ canvas.addEventListener('touchmove',e=>{e.preventDefault();if(joystick.active){c
 canvas.addEventListener('touchend',e=>{e.preventDefault();if(joystick.active){joystick.active=false;joystick.dx=0;joystick.dy=0;}touch.on=false;touch.dx=0;touch.dy=0;lastAimAngle=player.angle;},{passive:false});
 canvas.addEventListener('mousedown',e=>{ACinit();const hudPadX=Math.max(UI.sidePad*SC,12*SC),hudTop=Math.max(safeTop+UI.topPad*SC,safeTop+10*SC);const pbSz=Math.max(44*SC,22*SC),pbX=W-hudPadX-pbSz,pbY=hudTop;
   if(state==='menu'){
+    ctx.textAlign='center';
     const titleY=Math.max(safeTop+72*SC,H*0.13),cardY=titleY+62*SC,cardH=126*SC,by=cardY+cardH+26*SC,bw=Math.min(220*SC,W-44*SC),bh=58*SC,lbY=by+bh+14*SC,lbW=bw,lbH=46*SC,upY=lbY+lbH+14*SC,upW=bw,upH=46*SC;
     if(isInRect(e.clientX,e.clientY,W/2-bw/2,by,bw,bh)){state='weaponselect';return;}
     if(isInRect(e.clientX,e.clientY,W/2-lbW/2,lbY,lbW,lbH)){lbLoading=true;fetchLeaderboard().then(()=>lbLoading=false);state='leaderboard';return;}
